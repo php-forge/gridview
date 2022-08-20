@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Forge\GridView\Tests\Support;
 
-use Yiisoft\Data\Paginator\OffSetPaginator;
+use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Iterable\IterableDataReader;
 
@@ -19,6 +19,6 @@ trait TestTrait
     {
         $data = $this->createIterableProvider($data);
 
-        return (new OffSetPaginator($data))->withPageSize($pageSize)->withCurrentPage($currentPage);
+        return (new OffsetPaginator($data))->withPageSize($pageSize)->withCurrentPage($currentPage);
     }
 }
