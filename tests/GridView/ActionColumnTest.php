@@ -684,7 +684,7 @@ final class ActionColumnTest extends TestCase
                         '&#128270;'
                     )
                 )
-                ->contentAttributes(['class' => 'text-decoration-none test.class'])
+                ->contentAttributes(['class' => 'text-decoration-none test.class']),
         ];
     }
 

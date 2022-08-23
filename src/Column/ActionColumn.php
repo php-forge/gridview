@@ -403,7 +403,7 @@ final class ActionColumn extends Column
         $new = clone $this;
 
         if (!isset($new->buttons[$name]) && str_contains($new->template, '{' . $name . '}')) {
-            $new->buttons[$name] = static fn (string $url): string  => Button::create()
+            $new->buttons[$name] = static fn (string $url): string => Button::create()
                 ->attributes($attributes)
                 ->content(Tag::span([], $icon))
                 ->link($url)

@@ -573,7 +573,7 @@ final class GridView extends BaseListView
         }
 
         $content = Tag::create('tr', trim(implode('', $cells)), $this->headerRowAttributes);
-        $renderFilters =  PHP_EOL . $this->renderFilters($columns);
+        $renderFilters = PHP_EOL . $this->renderFilters($columns);
 
         if (self::FILTER_POS_HEADER === $this->filterPosition) {
             $content = $renderFilters . PHP_EOL . $content;

@@ -10,10 +10,7 @@ use Forge\Html\Helper\Encode;
 use Forge\Html\Tag\Tag;
 use Forge\Widget\AbstractWidget;
 use InvalidArgumentException;
-use JsonException;
 use Yiisoft\Translator\TranslatorInterface;
-
-use function ucfirst;
 
 /**
  * DetailView displays the detail of a single data.
@@ -112,7 +109,6 @@ final class DetailView extends AbstractWidget
 
         return $new;
     }
-
 
     /**
      * Return new instance with the data.

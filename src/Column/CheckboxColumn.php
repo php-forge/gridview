@@ -6,7 +6,6 @@ namespace Forge\GridView\Column;
 
 use Forge\Html\Helper\Attribute;
 use Forge\Html\Helper\CssClass;
-use Forge\Html\Helper\Utils;
 use Forge\Html\Tag\Tag;
 use JsonException;
 use Yiisoft\Json\Json;
@@ -38,9 +37,9 @@ final class CheckboxColumn extends Column
      * @param mixed $key The key associated with the data.
      * @param int $index The zero-based index of the data in the data provider.
      *
-     * @return string
-     *
      * @throws JsonException
+     *
+     * @return string
      */
     protected function renderDataCellContent(array|object $data, mixed $key, int $index): string
     {

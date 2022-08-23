@@ -8,7 +8,6 @@ use Forge\GridView\Column\CheckboxColumn;
 use Forge\GridView\Column\DataColumn;
 use Forge\GridView\GridView;
 use Forge\GridView\Tests\Support\TestTrait;
-use Forge\Html\Tag\Tag;
 use Forge\TestUtils\Assert;
 use Forge\TestUtils\Mock;
 use PHPUnit\Framework\TestCase;
@@ -233,7 +232,7 @@ final class CheckboxColumnTest extends TestCase
         return [
             DataColumn::create()->attribute('id'),
             DataColumn::create()->attribute('name'),
-            CheckboxColumn::create()
+            CheckboxColumn::create(),
         ];
     }
 

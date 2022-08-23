@@ -79,6 +79,7 @@ final class Toolbar extends AbstractWidget
 
         return $new;
     }
+
     /**
      * Returns a new instance with the HTML attributes for the container right.
      *

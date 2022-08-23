@@ -8,7 +8,6 @@ use Forge\GridView\Column\DataColumn;
 use Forge\GridView\Column\RadioColumn;
 use Forge\GridView\GridView;
 use Forge\GridView\Tests\Support\TestTrait;
-use Forge\Html\Tag\Tag;
 use Forge\TestUtils\Assert;
 use Forge\TestUtils\Mock;
 use PHPUnit\Framework\TestCase;
@@ -192,7 +191,7 @@ final class RadioColumnTest extends TestCase
         return [
             DataColumn::create()->attribute('id'),
             DataColumn::create()->attribute('name'),
-            RadioColumn::create()
+            RadioColumn::create(),
         ];
     }
 
@@ -203,7 +202,7 @@ final class RadioColumnTest extends TestCase
             DataColumn::create()->attribute('name'),
             RadioColumn::create()->content(
                 static fn (array|object $data, mixed $key, int $index): string => '<input name="radio-selection" type="radio" value="' . $index . '">'
-            )
+            ),
         ];
     }
 
@@ -216,7 +215,7 @@ final class RadioColumnTest extends TestCase
                 ->content(
                     static fn (array|object $data, mixed $key, int $index): string => '<input name="radio-selection" type="radio" value="' . $index . '">'
                 )
-                ->contentAttributes(['class' => 'test-class'])
+                ->contentAttributes(['class' => 'test-class']),
         ];
     }
 
@@ -225,7 +224,7 @@ final class RadioColumnTest extends TestCase
         return [
             DataColumn::create()->attribute('id'),
             DataColumn::create()->attribute('name'),
-            RadioColumn::create()->dataLabel('test.label')
+            RadioColumn::create()->dataLabel('test.label'),
         ];
     }
 }
