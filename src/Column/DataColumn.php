@@ -157,6 +157,11 @@ final class DataColumn extends Column
         return $this->attribute;
     }
 
+    public function getFilter(): string
+    {
+        return $this->filter;
+    }
+
     /**
      * Returns the data cell value.
      *
@@ -170,7 +175,7 @@ final class DataColumn extends Column
     {
         $value = '';
 
-        if (null !== $this->value && !($this->value instanceof Closure)) {
+        if ($this->value !== null && !($this->value instanceof Closure)) {
             $value = (string) $this->value;
         }
 
@@ -178,11 +183,11 @@ final class DataColumn extends Column
             $value = (string) call_user_func($this->value, $data, $key, $index, $this);
         }
 
-        if ('' !== $this->attribute && null === $this->value) {
+        if ($this->attribute !== '' && $this->value === null) {
             $value = (string) ArrayHelper::getValue($data, $this->attribute);
         }
 
-        return '' === $value ? $this->getEmptyCell() : $value;
+        return $value === '' ? $this->getEmptyCell() : $value;
     }
 
     public function getLabel(): string
@@ -270,7 +275,7 @@ final class DataColumn extends Column
      */
     protected function renderDataCellContent(object|array $data, mixed $key, int $index): string
     {
-        if (null !== $this->getContent()) {
+        if ($this->getContent() !== null) {
             return parent::renderDataCellContent($data, $key, $index);
         }
 
@@ -279,13 +284,10 @@ final class DataColumn extends Column
 
     protected function renderFilterCellContent(): string
     {
-        if ('' !== $this->filter) {
-            return $this->filter;
-        }
-
+        $filter = $this->filter !== '' ? $this->filter : parent::renderFilterCellContent();
         $filterInputAttributes = $this->filterInputAttributes;
 
-        if ('' !== $this->filterAttribute) {
+        if ($this->filterAttribute !== '') {
             CssClass::add($filterInputAttributes, 'form-control');
 
             $name = Attribute::getInputName($this->filterModelName, $this->filterAttribute);
@@ -293,18 +295,18 @@ final class DataColumn extends Column
             Attribute::add($filterInputAttributes, 'name', $name);
             Attribute::add($filterInputAttributes, 'value', $this->filterValueDefault);
 
-            return Tag::create('input', '', $filterInputAttributes);
+            $filter = Tag::create('input', '', $filterInputAttributes);
         }
 
-        return parent::renderFilterCellContent();
+        return $filter;
     }
 
     protected function renderHeaderCellContent(): string
     {
-        $label = '' === $this->getLabel()
+        $label = $this->getLabel() === ''
             ? Encode::content(parent::renderHeaderCellContent()) : Encode::content($this->getLabel());
 
-        if ('' !== $this->attribute && $this->sortingEnabled && '' !== $this->linkSorter) {
+        if ($this->attribute !== '' && $this->sortingEnabled && $this->linkSorter !== '') {
             $label = $this->linkSorter;
         }
 

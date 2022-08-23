@@ -7,6 +7,8 @@ namespace Forge\GridView\Column;
 use Closure;
 use Forge\Html\Tag\Tag;
 use Forge\Html\Widgets\Components\Button;
+use InvalidArgumentException;
+use Yiisoft\Router\UrlGeneratorInterface;
 
 use function is_array;
 
@@ -21,8 +23,9 @@ final class ActionColumn extends Column
     private array $urlArguments = [];
     private Closure|null $urlCreator = null;
     private bool $urlEnabledArguments = true;
+    private UrlGeneratorInterface|null $urlGenerator = null;
     private array $urlParamsConfig = [];
-    private string $urlName = 'admin';
+    private string $urlName = '';
     private array $urlQueryParameters = [];
     private array $visibleButtons = [];
 
@@ -61,17 +64,12 @@ final class ActionColumn extends Column
      *
      * @return static
      */
-    public function buttons(array $value): self
+    public function buttons(array $value): static
     {
         $new = clone $this;
         $new->buttons = $value;
 
         return $new;
-    }
-
-    public function getButtons(): array
-    {
-        return $this->buttons;
     }
 
     public function getLabel(): string
@@ -82,7 +80,21 @@ final class ActionColumn extends Column
         return '' !== parent::getLabel() ? parent::getLabel() : $actionLabel;
     }
 
-    public function loadDefaultButtons(): self
+    public function getUrlGenerator(): UrlGeneratorInterface
+    {
+        if ($this->urlGenerator === null) {
+            throw new InvalidArgumentException('Url generator is not set.');
+        }
+
+        return $this->urlGenerator;
+    }
+
+    /**
+     * Return new instance with default buttons for the action column.
+     *
+     * @return static
+     */
+    public function loadDefaultButtons(): static
     {
         $defaultButtons = (
             [
@@ -90,8 +102,8 @@ final class ActionColumn extends Column
                     'view',
                     '&#128270;',
                     [
-                        'class' => 'text-decoration-none',
                         'name' => 'view',
+                        'style' => 'text-decoration: none!important;',
                         'title' => 'View',
                     ],
                 ],
@@ -99,8 +111,8 @@ final class ActionColumn extends Column
                     'update',
                     '&#9998;',
                     [
-                        'class' => 'text-decoration-none',
                         'name' => 'update',
+                        'style' => 'text-decoration: none!important;',
                         'title' => 'Update',
                     ],
                 ],
@@ -108,10 +120,8 @@ final class ActionColumn extends Column
                     'delete',
                     '&#10060;',
                     [
-                        'class' => 'text-decoration-none',
-                        'data-confirm' => 'Are you sure you want to delete this item?',
                         'name' => 'delete',
-                        'data-method' => 'post',
+                        'style' => 'text-decoration: none!important;',
                         'title' => 'Delete',
                     ],
                 ],
@@ -134,7 +144,7 @@ final class ActionColumn extends Column
      *
      * @return static
      */
-    public function primaryKey(string $value): self
+    public function primaryKey(string $value): static
     {
         $new = clone $this;
         $new->primaryKey = $value;
@@ -162,11 +172,11 @@ final class ActionColumn extends Column
      * ],
      * ```
      *
-     * @return self
+     * @return static
      *
      * {@see buttons}
      */
-    public function template(string $value): self
+    public function template(string $value): static
     {
         $new = clone $this;
 
@@ -182,31 +192,116 @@ final class ActionColumn extends Column
     }
 
     /**
-     * Return new instance with urlCreator.
+     * Return a new instance with arguments of the route.
      *
-     * @param Closure $value a callback that creates a button URL using the specified model information.
+     * @param array $value Arguments of the route.
+     *
+     * @return static
+     */
+    public function urlArguments(array $value): static
+    {
+        $new = clone $this;
+        $new->urlArguments = $value;
+
+        return $new;
+    }
+
+    /**
+     * Return a new instance with the url creator.
+     *
+     * @param Closure $value The url creator.
      *
      * The signature of the callback should be the same as that of {@see createUrl()}. It can accept additional
      * parameter, which refers to the column instance itself:
-     *
      * ```php
-     * [
-     *     'urlCreator' => [
-     *         'action' => function (string $action, $data, mixed $key, int $index) {
-     *             return string;
-     *         }
-     *     ],
-     * ]
+     * function (string $action, array|object $data, mixed $key, int $index) {
+     *     //return string;
+     * }
      * ```
      *
      * If this property is not set, button URLs will be created using {@see createUrl()}.
      *
-     * @return self
+     * @return $this
      */
-    public function urlCreator(Closure $value): self
+    public function urlCreator(Closure $value): static
     {
         $new = clone $this;
         $new->urlCreator = $value;
+
+        return $new;
+    }
+
+    /**
+     * Return a new instance with enabled arguments of the route.
+     *
+     * @param bool $value Enabled arguments of the route.
+     *
+     * @return static
+     */
+    public function urlEnabledArguments(bool $value): static
+    {
+        $new = clone $this;
+        $new->urlEnabledArguments = $value;
+
+        return $new;
+    }
+
+    /**
+     * Return a new instance with url generator interface for pagination.
+     *
+     * @param UrlGeneratorInterface $value The url generator interface for pagination.
+     *
+     * @return static
+     */
+    public function urlGenerator(UrlGeneratorInterface $value): static
+    {
+        $new = clone $this;
+        $new->urlGenerator = $value;
+
+        return $new;
+    }
+
+    /**
+     * Returns a new instance with the name of the route.
+     *
+     * @param string $value The name of the route.
+     *
+     * @return static
+     */
+    public function urlName(string $value): static
+    {
+        $new = clone $this;
+        $new->urlName = $value;
+
+        return $new;
+    }
+
+    /**
+     * Return a new instance with query parameters of the route.
+     *
+     * @param array $value The query parameters of the route.
+     *
+     * @return static
+     */
+    public function urlQueryParameters(array $value): static
+    {
+        $new = clone $this;
+        $new->urlQueryParameters = $value;
+
+        return $new;
+    }
+
+    /**
+     * Return a new instance with config url parameters of the route.
+     *
+     * @param array $value The config url parameters of the route.
+     *
+     * @return static
+     */
+    public function urlParamsConfig(array $value): static
+    {
+        $new = clone $this;
+        $new->urlParamsConfig = $value;
 
         return $new;
     }
@@ -242,9 +337,9 @@ final class ActionColumn extends Column
      * ],
      * ```
      *
-     * @return self
+     * @return static
      */
-    public function visibleButtons(array $value): self
+    public function visibleButtons(array $value): static
     {
         $new = clone $this;
         $new->visibleButtons = $value;
@@ -264,12 +359,16 @@ final class ActionColumn extends Column
      */
     protected function renderDataCellContent(array|object $data, mixed $key, int $index): string
     {
+        if ($this->getContent() !== null) {
+            return parent::renderDataCellContent($data, $key, $index);
+        }
+
         return PHP_EOL . preg_replace_callback('/{([\w\-\/]+)}/', function (array $matches) use ($data, $key, $index): string {
             $content = '';
             $visible = false;
             $name = $matches[1];
 
-            if ([] === $this->visibleButtons) {
+            if ($this->visibleButtons === []) {
                 $visible = true;
             }
 
@@ -286,7 +385,7 @@ final class ActionColumn extends Column
                 $content = (string) $this->buttons[$name]($url, $data, $key);
             }
 
-            return $content . PHP_EOL;
+            return $content !== '' ? $content . PHP_EOL : '';
         }, $this->template);
     }
 
@@ -297,9 +396,9 @@ final class ActionColumn extends Column
      * @param string $icon The icon name.
      * @param array $attributes The HTML attributes in terms of name-value pairs.
      *
-     * @return self
+     * @return static
      */
-    private function createDefaultButton(string $name, string $icon, array $attributes = []): self
+    private function createDefaultButton(string $name, string $icon, array $attributes = []): static
     {
         $new = clone $this;
 
@@ -327,24 +426,24 @@ final class ActionColumn extends Column
      */
     private function createUrl(string $action, array|object $data, mixed $key, int $index): string
     {
-        $name = $this->urlName . '/' . $action;
+        if (is_callable($this->urlCreator)) {
+            return (string) call_user_func($this->urlCreator, $action, $data, $key, $index, $this);
+        }
 
-        if ('' !== $this->primaryKey) {
+        if ($this->primaryKey !== '') {
             /** @var mixed */
             $key = $data[$this->primaryKey] ?? $key;
         }
 
-        if (is_callable($this->urlCreator)) {
-            return (string) call_user_func($this->urlCreator, $name, $data, $key, $index, $this);
-        }
-
+        $route = $this->urlName !== '' ? $this->urlName . '/' . $action : $action;
         $urlArguments = [];
-        $urlParamsConfig = $this->urlParamsConfig;
         $urlQueryParameters = [];
+        $urlParamsConfig = is_array($key) ? $key : [$this->primaryKey => $key];
 
-        if ([] === $urlParamsConfig) {
-            $urlParamsConfig = is_array($key) ? $key : [$this->primaryKey => $key];
-        }
+        $urlParamsConfig = match ($this->urlParamsConfig) {
+            [] => $urlParamsConfig,
+            default => array_merge($this->urlParamsConfig, $urlParamsConfig),
+        };
 
         if ($this->urlEnabledArguments) {
             /** @psalm-var array<string,string> */
@@ -353,6 +452,6 @@ final class ActionColumn extends Column
             $urlQueryParameters = array_merge($this->urlQueryParameters, $urlParamsConfig);
         }
 
-        return $this->getUrlGenerator()->generate($name, $urlArguments, $urlQueryParameters);
+        return $this->getUrlGenerator()->generate($route, $urlArguments, $urlQueryParameters);
     }
 }

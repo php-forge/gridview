@@ -94,9 +94,6 @@ abstract class BaseListView extends AbstractWidget
         return $new;
     }
 
-    /**
-     * Returns the paginator of the grid view, detail view, or list view.
-     */
     public function getPaginator(): PaginatorInterface
     {
         if ($this->paginator === null) {
@@ -106,9 +103,6 @@ abstract class BaseListView extends AbstractWidget
         return $this->paginator;
     }
 
-    /**
-     * return translator interface.
-     */
     public function getTranslator(): TranslatorInterface
     {
         if ($this->translator === null) {
@@ -118,17 +112,11 @@ abstract class BaseListView extends AbstractWidget
         return $this->translator;
     }
 
-    /**
-     * Returns a translator category.
-     */
     public function getTranslatorCategory(): string
     {
         return $this->translatorCategory;
     }
 
-    /**
-     * return url generator interface.
-     */
     public function getUrlGenerator(): UrlGeneratorInterface
     {
         if ($this->urlGenerator === null) {
@@ -507,21 +495,22 @@ abstract class BaseListView extends AbstractWidget
 
     private function renderSummary(): string
     {
+        $pageCount = count($this->getDataReader());
         /** @var OffsetPaginator */
         $paginator = $this->getPaginator();
 
-        return Widget\Summary::create(
-            construct: [
-                $paginator->getOffset() + 1,
-                $paginator->getTotalItems(),
-                $paginator->getCurrentPage() + 1,
-                $paginator->getCurrentPageSize(),
+        if ($pageCount <= 0) {
+            return '';
+        }
+
+        return Tag::div(
+            $this->summaryAttributes,
+            $this->getTranslator()->translate(
                 $this->summary,
-                $this->summaryAttributes,
-                count($this->getDataReader()),
-                $this->getTranslator(),
-            ],
-        )->render();
+                ['pageCount' => $pageCount, 'totalCount' => $paginator->getTotalItems()],
+                'gridview',
+            ),
+        );
     }
 
     private function renderGrid(): string

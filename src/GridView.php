@@ -380,8 +380,16 @@ final class GridView extends BaseListView
         }
 
         foreach ($columns as $i => $column) {
+            if ($column instanceof Column && !$column->isVisible()) {
+                unset($columns[$i]);
+                continue;
+            }
+
             if ($column instanceof ActionColumn) {
-                $column = $column->loadDefaultButtons();
+                $column = $column
+                    ->loadDefaultButtons()
+                    ->urlGenerator($this->getUrlGenerator())
+                    ->urlName($this->urlName);
             }
 
             if ($column instanceof Column) {
@@ -389,15 +397,16 @@ final class GridView extends BaseListView
                     ->columnsTranslation($this->columnsTranslation)
                     ->emptyCell($this->emptyCell)
                     ->translator($this->getTranslator())
-                    ->translatorCategory($this->getTranslatorCategory())
-                    ->urlGenerator($this->getUrlGenerator());
+                    ->translatorCategory($this->getTranslatorCategory());
             }
 
             if ($column instanceof DataColumn) {
                 $linkSorter = $this->renderLinkSorter($column->getAttribute(), $column->getLabel());
-                $column = $column
-                    ->filterModelName($this->filterModelName)
-                    ->linkSorter($linkSorter);
+                $column = $column->filterModelName($this->filterModelName);
+
+                if ($linkSorter !== '') {
+                    $column = $column->linkSorter($linkSorter);
+                }
             }
 
             if ($column instanceof SerialColumn) {
@@ -446,13 +455,11 @@ final class GridView extends BaseListView
         $cells = [];
         $filterRowAttributes = $this->filterRowAttributes;
 
-        if ('' !== $this->filterModelName) {
-            CssClass::add($filterRowAttributes, 'filters');
+        CssClass::add($filterRowAttributes, 'filters');
 
-            foreach ($columns as $column) {
-                if ($column instanceof Column) {
-                    $cells[] = $column->renderFilterCell() . PHP_EOL;
-                }
+        foreach ($columns as $column) {
+            if ($column instanceof DataColumn && ($column->getFilter() !== '' || $this->filterModelName !== '')) {
+                $cells[] = $column->renderFilterCell() . PHP_EOL;
             }
         }
 

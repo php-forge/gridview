@@ -27,22 +27,22 @@ final class RadioColumn extends Column
      */
     protected function renderDataCellContent(array|object $data, mixed $key, int $index): string
     {
-        if (!empty($this->getContent())) {
+        if ($this->getContent() !== null) {
             return parent::renderDataCellContent($data, $key, $index);
         }
 
-        $attributes = $this->getAttributes();
-        $attributes['type'] = 'radio';
+        $contentAttributes = $this->getContentAttributes();
+        $contentAttributes['type'] = 'radio';
 
-        if (!array_key_exists('name', $attributes)) {
-            Attribute::add($attributes, 'name', 'radio-selection');
+        if (!array_key_exists('name', $contentAttributes)) {
+            Attribute::add($contentAttributes, 'name', 'radio-selection');
         }
 
-        if (!array_key_exists('value', $attributes)) {
+        if (!array_key_exists('value', $contentAttributes)) {
             /** @var mixed */
-            Attribute::add($attributes, 'value', is_array($key) ? Json::encode($key) : $key);
+            Attribute::add($contentAttributes, 'value', is_array($key) ? Json::encode($key) : $key);
         }
 
-        return Tag::create('input', '', $attributes);
+        return Tag::create('input', '', $contentAttributes);
     }
 }

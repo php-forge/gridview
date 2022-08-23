@@ -9,7 +9,6 @@ use Forge\GridView\GridView;
 use Forge\Html\Helper\Attribute;
 use Forge\Html\Helper\CssClass;
 use Forge\Html\Tag\Tag;
-use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Translator\TranslatorInterface;
 
 use function strtolower;
@@ -33,7 +32,6 @@ abstract class Column
     private array $labelAttributes = [];
     private TranslatorInterface $translator;
     private string $translatorCategory = '';
-    private UrlGeneratorInterface $urlGenerator;
     protected bool $visible = true;
 
     final public function __construct()
@@ -51,21 +49,6 @@ abstract class Column
     {
         $new = clone $this;
         $new->attributes = $values;
-
-        return $new;
-    }
-
-    /**
-     * Return new instance with CSS class of the column.
-     *
-     * @param string $value The CSS class of the column.
-     *
-     * @return static
-     */
-    public function class(string $value): static
-    {
-        $new = clone $this;
-        CssClass::add($new->attributes, $value);
 
         return $new;
     }
@@ -211,6 +194,11 @@ abstract class Column
         return $this->content;
     }
 
+    public function getContentAttributes(): array
+    {
+        return $this->contentAttributes;
+    }
+
     public function getEmptyCell(): string
     {
         return $this->emptyCell;
@@ -219,11 +207,6 @@ abstract class Column
     public function getLabel(): string
     {
         return $this->label;
-    }
-
-    public function getUrlGenerator(): UrlGeneratorInterface
-    {
-        return $this->urlGenerator;
     }
 
     public function getTranslator(): TranslatorInterface
@@ -378,21 +361,6 @@ abstract class Column
         return $new;
     }
 
-    /**
-     * Return a new instance with url generator interface for pagination.
-     *
-     * @param UrlGeneratorInterface $value The url generator interface for pagination.
-     *
-     * @return static
-     */
-    public function urlGenerator(UrlGeneratorInterface $value): static
-    {
-        $new = clone $this;
-        $new->urlGenerator = $value;
-
-        return $new;
-    }
-
     public static function create(): static
     {
         return new static();
@@ -423,7 +391,7 @@ abstract class Column
     {
         $html = $this->emptyCell;
 
-        if (!empty($this->content)) {
+        if ($this->content !== null) {
             $html = (string) call_user_func($this->content, $data, $key, $index, $this);
         }
 

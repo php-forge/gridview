@@ -6,6 +6,7 @@ namespace Forge\GridView\Column;
 
 use Forge\Html\Helper\Attribute;
 use Forge\Html\Helper\CssClass;
+use Forge\Html\Helper\Utils;
 use Forge\Html\Tag\Tag;
 use JsonException;
 use Yiisoft\Json\Json;
@@ -43,24 +44,24 @@ final class CheckboxColumn extends Column
      */
     protected function renderDataCellContent(array|object $data, mixed $key, int $index): string
     {
-        if (!empty($this->getContent())) {
+        if ($this->getContent() !== null) {
             return parent::renderDataCellContent($data, $key, $index);
         }
 
-        $attributes = $this->getAttributes();
+        $contentAttributes = $this->getContentAttributes();
 
-        if (!isset($attributes['value'])) {
+        if (!isset($contentAttributes['value'])) {
             /** @var mixed */
-            $attributes['value'] = is_array($key) ? Json::encode($key) : $key;
+            $contentAttributes['value'] = is_array($key) ? Json::encode($key) : $key;
         }
 
-        if (!array_key_exists('name', $attributes)) {
-            Attribute::add($attributes, 'name', 'checkbox-selection');
+        if (!array_key_exists('name', $contentAttributes)) {
+            Attribute::add($contentAttributes, 'name', 'checkbox-selection');
         }
 
-        Attribute::add($attributes, 'type', 'checkbox');
+        Attribute::add($contentAttributes, 'type', 'checkbox');
 
-        return Tag::create('input', '', $attributes);
+        return Tag::create('input', '', $contentAttributes);
     }
 
     /**
@@ -73,38 +74,17 @@ final class CheckboxColumn extends Column
      */
     protected function renderHeaderCellContent(): string
     {
-        if ('' !== $this->getLabel() || false === $this->multiple) {
+        if ($this->getLabel() !== '' || $this->multiple === false) {
             return parent::renderHeaderCellContent();
         }
 
-        $attributes = [];
+        $headerCellattributes = [];
 
-        Attribute::add($attributes, 'name', $this->getArrayableName());
-        Attribute::add($attributes, 'type', 'checkbox');
-        Attribute::add($attributes, 'value', 1);
-        CssClass::add($attributes, 'select-on-check-all');
+        Attribute::add($headerCellattributes, 'name', 'checkbox-selection-all');
+        Attribute::add($headerCellattributes, 'type', 'checkbox');
+        Attribute::add($headerCellattributes, 'value', 1);
+        CssClass::add($headerCellattributes, 'select-on-check-all');
 
-        return Tag::create('input', '', $attributes);
-    }
-
-    private function getArrayableName(): string
-    {
-        $name = 'checkbox-selection';
-
-        if (array_key_exists('name', $this->getAttributes())) {
-            $name = (string) $this->getAttributes()['name'];
-        }
-
-        if (substr_compare($name, '[]', -2, 2) === 0) {
-            $name = substr($name, 0, -2);
-        }
-
-        if (substr_compare($name, ']', -1, 1) === 0) {
-            $name = substr($name, 0, -1) . '_all]';
-        } else {
-            $name .= '_all';
-        }
-
-        return $name;
+        return Tag::create('input', '', $headerCellattributes);
     }
 }
