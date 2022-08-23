@@ -267,7 +267,7 @@ final class DataColumn extends Column
     /**
      * Renders the data cell content.
      *
-     * @param object|array $data The data.
+     * @param array|object $data The data.
      * @param mixed $key The key associated with the data.
      * @param int $index The zero-based index of the data in the data provider.
      *

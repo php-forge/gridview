@@ -20,7 +20,7 @@ final class ListView extends BaseListView
 {
     private Closure $afterItem;
     private Closure $beforeItem;
-    /** @var string|callable|null */
+    /** @var callable|string|null */
     private $itemView = null;
     private array $itemViewAttributes = [];
     private string $separator = "\n";
@@ -86,7 +86,6 @@ final class ListView extends BaseListView
     {
         if ($this->webView === null) {
             throw new InvalidArgumentException('The "webView" property must be set.');
-
         }
 
         return $this->webView;
@@ -95,7 +94,7 @@ final class ListView extends BaseListView
     /**
      * Return new instance with itemView closure.
      *
-     * @param string|Closure $value the name of the view for rendering each data item, or a callback (e.g. an anonymous
+     * @param Closure|string $value the name of the view for rendering each data item, or a callback (e.g. an anonymous
      * function) for rendering each data item. If it specifies a view name, the following variables will be available in
      * the view:
      *
@@ -136,7 +135,6 @@ final class ListView extends BaseListView
 
         return $new;
     }
-
 
     /**
      * Return new instance with the separator between the items.
@@ -192,9 +190,9 @@ final class ListView extends BaseListView
      * @param mixed $key The key value associated with the data.
      * @param int $index The zero-based index of the data array.
      *
-     * @return string
-     *
      * @throws Throwable|ViewNotFoundException
+     *
+     * @return string
      */
     protected function renderItem(array|object $data, mixed $key, int $index): string
     {
@@ -229,9 +227,9 @@ final class ListView extends BaseListView
     /**
      * Renders all data models.
      *
-     * @return string
-     *
      * @throws Throwable|ViewNotFoundException
+     *
+     * @return string
      */
     protected function renderItems(): string
     {
@@ -289,6 +287,7 @@ final class ListView extends BaseListView
      * @param array|object $data The data to be rendered.
      * @param mixed $key The key value associated with the data.
      * @param int $index The zero-based index of the data.
+     *
      * @return string {@see beforeItem} call result or `null` when {@see beforeItem} is not a closure.
      *
      * {@see beforeItem}

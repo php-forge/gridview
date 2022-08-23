@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Forge\GridView\Tests\Support;
 
 use Yiisoft\Data\Paginator\OffsetPaginator;
-use Yiisoft\Data\Reader\DataReaderInterface;
 use Yiisoft\Data\Reader\Iterable\IterableDataReader;
 use Yiisoft\Data\Reader\Sort;
 
