@@ -33,10 +33,6 @@ abstract class Column
     private string $translatorCategory = '';
     protected bool $visible = true;
 
-    final public function __construct()
-    {
-    }
-
     /**
      * Return new instance with the HTML attributes of column.
      *
@@ -433,6 +429,6 @@ abstract class Column
      */
     protected function renderHeaderCellContent(): string
     {
-        return '' !== $this->getLabel() ? $this->getLabel() : $this->getHeaderCellLabel();
+        return $this->getLabel() !== '' ? $this->getLabel() : $this->getHeaderCellLabel();
     }
 }

@@ -13,7 +13,7 @@ final class SerialColumn extends Column
 
     public function getLabel(): string
     {
-        return '' !== parent::getLabel() ? parent::getLabel() : '#';
+        return parent::getLabel() !== '' ? parent::getLabel() : '#';
     }
 
     /**
