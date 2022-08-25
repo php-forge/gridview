@@ -318,7 +318,7 @@ final class DetailView extends AbstractWidget
 
     private function renderAttributes(array|Closure $attributes): array
     {
-        if ([] === $attributes) {
+        if ($attributes === []) {
             return [];
         }
 
@@ -346,11 +346,11 @@ final class DetailView extends AbstractWidget
 
     private function renderValue(string $attribute, mixed $value): mixed
     {
-        if (null === $value && is_array($this->data) && $this->has($attribute)) {
+        if ($value === null && is_array($this->data) && $this->has($attribute)) {
             return $this->data[$attribute];
         }
 
-        if (null === $value && is_object($this->data) && $this->has($attribute)) {
+        if ($value === null && is_object($this->data) && $this->has($attribute)) {
             return $this->data->{$attribute};
         }
 

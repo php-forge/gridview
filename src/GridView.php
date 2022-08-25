@@ -350,7 +350,7 @@ final class GridView extends BaseListView
              * @var mixed $value
              */
             foreach ($data as $name => $value) {
-                if (null === $value || is_scalar($value) || is_callable([$value, '__toString'])) {
+                if ($value === null || is_scalar($value) || is_callable([$value, '__toString'])) {
                     $columns[] = DataColumn::create()->attribute($name);
                 }
             }
@@ -488,7 +488,7 @@ final class GridView extends BaseListView
         foreach ($data as $index => $value) {
             $key = $keys[$index];
 
-            if (null !== $this->beforeRow) {
+            if ($this->beforeRow !== null) {
                 /** @var array */
                 $row = call_user_func($this->beforeRow, $value, $key, $index, $this);
 
@@ -499,11 +499,11 @@ final class GridView extends BaseListView
 
             $rows[] = $this->renderTableRow($columns, $value, $key, $index);
 
-            if (null !== $this->afterRow) {
+            if ($this->afterRow !== null) {
                 /** @psalm-var array<array-key,string> */
                 $row = call_user_func($this->afterRow, $value, $key, $index, $this);
 
-                if (!empty($row)) {
+                if ($row !== []) {
                     $rows[] = $row;
                 }
             }
@@ -546,7 +546,7 @@ final class GridView extends BaseListView
 
         $content = Tag::create('tr', implode('', $cells), $footerRowAttributes);
 
-        if (self::FILTER_POS_FOOTER === $this->filterPosition) {
+        if ($this->filterPosition === self::FILTER_POS_FOOTER) {
             $content .= PHP_EOL . $this->renderFilters($columns);
         }
 
@@ -575,7 +575,7 @@ final class GridView extends BaseListView
         $content = Tag::create('tr', trim(implode('', $cells)), $this->headerRowAttributes);
         $renderFilters = PHP_EOL . $this->renderFilters($columns);
 
-        if (self::FILTER_POS_HEADER === $this->filterPosition) {
+        if ($this->filterPosition === self::FILTER_POS_HEADER) {
             $content = $renderFilters . PHP_EOL . $content;
         } elseif (self::FILTER_POS_BODY === $this->filterPosition) {
             $content .= $renderFilters;
