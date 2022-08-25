@@ -29,7 +29,6 @@ abstract class BaseListView extends AbstractWidget
     private string $summary = 'gridview.summary';
     private array $summaryAttributes = [];
     private TranslatorInterface|null $translator = null;
-    private string $translatorCategory = '';
     private string $toolbar = '';
     protected array $urlArguments = [];
     protected bool $urlEnabledArguments = true;
@@ -110,11 +109,6 @@ abstract class BaseListView extends AbstractWidget
         }
 
         return $this->translator;
-    }
-
-    public function getTranslatorCategory(): string
-    {
-        return $this->translatorCategory;
     }
 
     public function getUrlGenerator(): UrlGeneratorInterface
@@ -313,21 +307,6 @@ abstract class BaseListView extends AbstractWidget
     {
         $new = clone $this;
         $new->translator = $value;
-
-        return $new;
-    }
-
-    /**
-     * Returns a new instance with the translator category.
-     *
-     * @param string $value The translator category.
-     *
-     * @return static
-     */
-    public function translatorCategory(string $value): static
-    {
-        $new = clone $this;
-        $new->translatorCategory = $value;
 
         return $new;
     }

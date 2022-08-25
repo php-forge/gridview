@@ -35,7 +35,6 @@ final class GridView extends BaseListView
     /** @psalm-var array<array-key,array<array-key,Column>|Column|string> */
     private array $columns = [];
     private bool $columnsGroupEnabled = false;
-    private bool $columnsTranslation = false;
     private string $emptyCell = '&nbsp;';
     private string $filterModelName = '';
     private string $filterPosition = self::FILTER_POS_BODY;
@@ -118,21 +117,6 @@ final class GridView extends BaseListView
     {
         $new = clone $this;
         $new->columnsGroupEnabled = $value;
-
-        return $new;
-    }
-
-    /**
-     * Returns a new instance whether to translate the grid column header.
-     *
-     * @param bool $value Whether to translate the grid column header.
-     *
-     * @return self
-     */
-    public function columnsTranslation(bool $value): self
-    {
-        $new = clone $this;
-        $new->columnsTranslation = $value;
 
         return $new;
     }
@@ -393,11 +377,7 @@ final class GridView extends BaseListView
             }
 
             if ($column instanceof Column) {
-                $column = $column
-                    ->columnsTranslation($this->columnsTranslation)
-                    ->emptyCell($this->emptyCell)
-                    ->translator($this->getTranslator())
-                    ->translatorCategory($this->getTranslatorCategory());
+                $column = $column->emptyCell($this->emptyCell);
             }
 
             if ($column instanceof DataColumn) {

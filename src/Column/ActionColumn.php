@@ -135,12 +135,7 @@ final class ActionColumn extends Column
     {
         $label = parent::getLabel();
 
-        if ($label === '') {
-            $label = $this->getColumnsTranslation()
-                ? $this->getTranslator()->translate('gridview.column.label.actions', [], 'gridview') : 'Actions';
-        }
-
-        return $label;
+        return  $label !== '' ? $label : 'Actions';
     }
 
     public function getUrlGenerator(): UrlGeneratorInterface

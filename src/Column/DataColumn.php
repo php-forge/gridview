@@ -192,19 +192,7 @@ final class DataColumn extends Column
 
     public function getLabel(): string
     {
-        $label = parent::getLabel();
-
-        if ($label === '') {
-            $label = $this->getColumnsTranslation()
-                ? $this->getTranslator()->translate(
-                    "gridview.data.column.$this->attribute",
-                    [],
-                    $this->getTranslatorCategory()
-                )
-                : ucfirst($this->attribute);
-        }
-
-        return $label;
+        return parent::getLabel() !== '' ? parent::getLabel() : ucfirst($this->attribute);
     }
 
     /**

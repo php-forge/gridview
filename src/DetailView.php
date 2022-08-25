@@ -10,7 +10,6 @@ use Forge\Html\Helper\Encode;
 use Forge\Html\Tag\Tag;
 use Forge\Widget\AbstractWidget;
 use InvalidArgumentException;
-use Yiisoft\Translator\TranslatorInterface;
 
 /**
  * DetailView displays the detail of a single data.
@@ -39,8 +38,6 @@ final class DetailView extends AbstractWidget
     private string $labelTag = 'span';
     private array|object $data = [];
     private string $header = '';
-    private TranslatorInterface|null $translator = null;
-    private string $translatorCategory = '';
     private array|Closure $valueAttributes = [];
     private string $valueTag = 'div';
 
@@ -127,18 +124,6 @@ final class DetailView extends AbstractWidget
     }
 
     /**
-     * return translator interface.
-     */
-    public function getTranslator(): TranslatorInterface
-    {
-        if ($this->translator === null) {
-            throw new InvalidArgumentException('The translator is not set.');
-        }
-
-        return $this->translator;
-    }
-
-    /**
      * Return new instance with the header.
      *
      * @param string $value The header.
@@ -179,36 +164,6 @@ final class DetailView extends AbstractWidget
     {
         $new = clone $this;
         $new->labelTag = $value;
-
-        return $new;
-    }
-
-    /**
-     * Returns a new instance with the translator interface of the grid view, detail view, or list view.
-     *
-     * @param TranslatorInterface $value The translator interface of the grid view, detail view, or list view.
-     *
-     * @return static
-     */
-    public function translator(TranslatorInterface $value): static
-    {
-        $new = clone $this;
-        $new->translator = $value;
-
-        return $new;
-    }
-
-    /**
-     * Returns a new instance with the translator category.
-     *
-     * @param string $value The translator category.
-     *
-     * @return static
-     */
-    public function translatorCategory(string $value): static
-    {
-        $new = clone $this;
-        $new->translatorCategory = $value;
 
         return $new;
     }
@@ -294,14 +249,6 @@ final class DetailView extends AbstractWidget
             $valueAttributes = $value['valueAttributes'] ?? $this->valueAttributes;
             /** @var string */
             $valueTag = $value['valueTag'] ?? $this->valueTag;
-
-            if ($this->columnsTranslation && '' !== $attribute) {
-                $label = $this->getTranslator()->translate(
-                    "detailview.column.$attribute",
-                    [],
-                    $this->translatorCategory,
-                );
-            }
 
             $normalized[] = [
                 'label' => Encode::content($label),

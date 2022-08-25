@@ -223,60 +223,6 @@ final class BaseTest extends TestCase
         );
     }
 
-    public function testColumnWithTranslations(): void
-    {
-        Assert::equalsWithoutLE(
-            <<<HTML
-            <div id="w1-grid">
-            <table class="table">
-            <thead>
-            <tr>
-            <th>#</th>
-            <th>gridview.data.column.id</th>
-            <th>gridview.data.column.name</th>
-            <th>gridview.column.label.actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td data-label="#">1</td>
-            <td data-label="gridview.data.column.id">1</td>
-            <td data-label="gridview.data.column.name">John</td>
-            <td data-label="gridview.column.label.actions">
-            <a name="view" href="/admin/view?id=1" title="View" role="button" style="text-decoration: none!important;"><span>&#128270;</span></a>
-            <a name="update" href="/admin/update?id=1" title="Update" role="button" style="text-decoration: none!important;"><span>&#9998;</span></a>
-            <a name="delete" href="/admin/delete?id=1" title="Delete" role="button" style="text-decoration: none!important;"><span>&#10060;</span></a>
-            </td>
-            </tr>
-            <tr>
-            <td data-label="#">2</td>
-            <td data-label="gridview.data.column.id">2</td>
-            <td data-label="gridview.data.column.name">Mary</td>
-            <td data-label="gridview.column.label.actions">
-            <a name="view" href="/admin/view?id=2" title="View" role="button" style="text-decoration: none!important;"><span>&#128270;</span></a>
-            <a name="update" href="/admin/update?id=2" title="Update" role="button" style="text-decoration: none!important;"><span>&#9998;</span></a>
-            <a name="delete" href="/admin/delete?id=2" title="Delete" role="button" style="text-decoration: none!important;"><span>&#10060;</span></a>
-            </td>
-            </tr>
-            </tbody>
-            </table>
-            <div>
-            gridview.summary
-            </div>
-            </div>
-            HTML,
-            GridView::create()
-                ->columns($this->createColumnsWithTranslations())
-                ->columnsTranslation(true)
-                ->id('w1-grid')
-                ->paginator($this->createPaginator($this->data, 10, 1))
-                ->translator(Mock::translator('en'))
-                ->urlGenerator($this->createUrlGenerator())
-                ->urlName('admin')
-                ->render()
-        );
-    }
-
     public function testEmptyCell(): void
     {
         Assert::equalsWithoutLE(

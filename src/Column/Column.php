@@ -8,7 +8,6 @@ use Closure;
 use Forge\GridView\GridView;
 use Forge\Html\Helper\Attribute;
 use Forge\Html\Tag\Tag;
-use Yiisoft\Translator\TranslatorInterface;
 
 use function strtolower;
 
@@ -20,7 +19,6 @@ use function strtolower;
 abstract class Column
 {
     private array $attributes = [];
-    private bool $columnsTranslation = false;
     private Closure|null $content = null;
     private array $contentAttributes = [];
     private string $emptyCell = '';
@@ -29,8 +27,6 @@ abstract class Column
     private array $footerAttributes = [];
     private string $label = '';
     private array $labelAttributes = [];
-    private TranslatorInterface $translator;
-    private string $translatorCategory = '';
     protected bool $visible = true;
 
     final public function __construct()
@@ -48,21 +44,6 @@ abstract class Column
     {
         $new = clone $this;
         $new->attributes = $values;
-
-        return $new;
-    }
-
-    /**
-     * Returns a new instance whether to translate the grid column header.
-     *
-     * @param bool $value Whether to translate the grid column header.
-     *
-     * @return static
-     */
-    public function columnsTranslation(bool $value): static
-    {
-        $new = clone $this;
-        $new->columnsTranslation = $value;
 
         return $new;
     }
@@ -183,11 +164,6 @@ abstract class Column
         return $this->attributes;
     }
 
-    public function getColumnsTranslation(): bool
-    {
-        return $this->columnsTranslation;
-    }
-
     public function getContent(): ?Closure
     {
         return $this->content;
@@ -206,16 +182,6 @@ abstract class Column
     public function getLabel(): string
     {
         return $this->label;
-    }
-
-    public function getTranslator(): TranslatorInterface
-    {
-        return $this->translator;
-    }
-
-    public function getTranslatorCategory(): string
-    {
-        return $this->translatorCategory;
     }
 
     public function isVisible(): bool
@@ -328,36 +294,6 @@ abstract class Column
     public function renderHeaderCell(): string
     {
         return Tag::create('th', $this->renderHeaderCellContent(), $this->labelAttributes);
-    }
-
-    /**
-     * Returns a new instance with the translator interface.
-     *
-     * @param TranslatorInterface $value The translator interface.
-     *
-     * @return static
-     */
-    public function translator(TranslatorInterface $value): static
-    {
-        $new = clone $this;
-        $new->translator = $value;
-
-        return $new;
-    }
-
-    /**
-     * Returns a new instance with the translator category.
-     *
-     * @param string $value The translator category.
-     *
-     * @return static
-     */
-    public function translatorCategory(string $value): static
-    {
-        $new = clone $this;
-        $new->translatorCategory = $value;
-
-        return $new;
     }
 
     public static function create(): static
