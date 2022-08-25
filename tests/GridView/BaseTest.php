@@ -480,7 +480,7 @@ final class BaseTest extends TestCase
                 ->id('w1-grid')
                 ->paginator($this->createPaginator($this->data, 10, 1))
                 ->layout('')
-                ->layoutGridTable("{header}{items}{summary}{pager}")
+                ->layoutGridTable('{header}{items}{summary}{pager}')
                 ->translator(Mock::translator('en'))
                 ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
                 ->render()

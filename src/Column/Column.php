@@ -7,7 +7,6 @@ namespace Forge\GridView\Column;
 use Closure;
 use Forge\GridView\GridView;
 use Forge\Html\Helper\Attribute;
-use Forge\Html\Helper\CssClass;
 use Forge\Html\Tag\Tag;
 use Yiisoft\Translator\TranslatorInterface;
 
