@@ -764,11 +764,11 @@ final class ActionColumnTest extends TestCase
         return [
             ActionColumn::create()->visibleButtons(
                 [
-                    'view' => static fn (array|object $data, mixed $key, int $index): array => $data['id'] === 1
-                        ? ['view' => true] : [],
-                    'update' => static fn (array|object $data, mixed $key, int $index): array => $data['id'] === 1
-                        ? [] : ['update' => true],
-                ]
+                    'view' => static fn (array|object $data, mixed $key, int $index): bool => $data['id'] === 1
+                        ? true : false,
+                    'update' => static fn (array|object $data, mixed $key, int $index): bool => $data['id'] === 1
+                        ? false : true,
+                ],
             ),
         ];
     }

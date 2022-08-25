@@ -72,12 +72,75 @@ final class ActionColumn extends Column
         return $new;
     }
 
+    /**
+     * Initializes the default button rendering callback for single button.
+     *
+     * @param string $name The button names as it's written in template.
+     * @param string $icon The icon name.
+     * @param array $attributes The HTML attributes in terms of name-value pairs.
+     *
+     * @return static
+     */
+    public function createDefaultButton(): static
+    {
+        /** @psalm-var array<string,Closure> */
+        $defaultButtons = [
+            'view' => static fn (string $url): string => Tag::a(
+                [
+                    'href' => $url,
+                    'name' => 'view',
+                    'role' => 'button',
+                    'style' => 'text-decoration: none!important;',
+                    'title' => 'View',
+                ],
+                Tag::span([], '&#128270;')
+            ),
+            'update' => static fn (string $url): string => Tag::a(
+                [
+                    'href' => $url,
+                    'name' => 'update',
+                    'role' => 'button',
+                    'style' => 'text-decoration: none!important;',
+                    'title' => 'Update',
+                ],
+                Tag::span([], '&#9998;')
+            ),
+            'delete' => static fn (string $url): string => Tag::a(
+                [
+                    'href' => $url,
+                    'name' => 'delete',
+                    'role' => 'button',
+                    'style' => 'text-decoration: none!important;',
+                    'title' => 'Delete',
+                ],
+                Tag::span([], '&#10060;')
+            ),
+        ];
+
+        $new = clone $this;
+
+        foreach ($defaultButtons as $name => $button) {
+            $new->buttons[$name] = $button;
+        }
+
+        return $new;
+    }
+
+    public function getButtons(): array
+    {
+        return $this->buttons;
+    }
+
     public function getLabel(): string
     {
-        $actionLabel = true === $this->getColumnsTranslation()
-            ? $this->getTranslator()->translate('gridview.column.label.actions', [], 'gridview') : 'Actions';
+        $label = parent::getLabel();
 
-        return '' !== parent::getLabel() ? parent::getLabel() : $actionLabel;
+        if ($label === '') {
+            $label = $this->getColumnsTranslation()
+                ? $this->getTranslator()->translate('gridview.column.label.actions', [], 'gridview') : 'Actions';
+        }
+
+        return $label;
     }
 
     public function getUrlGenerator(): UrlGeneratorInterface
@@ -87,54 +150,6 @@ final class ActionColumn extends Column
         }
 
         return $this->urlGenerator;
-    }
-
-    /**
-     * Return new instance with default buttons for the action column.
-     *
-     * @return static
-     */
-    public function loadDefaultButtons(): static
-    {
-        $defaultButtons = (
-            [
-                [
-                    'view',
-                    '&#128270;',
-                    [
-                        'name' => 'view',
-                        'style' => 'text-decoration: none!important;',
-                        'title' => 'View',
-                    ],
-                ],
-                [
-                    'update',
-                    '&#9998;',
-                    [
-                        'name' => 'update',
-                        'style' => 'text-decoration: none!important;',
-                        'title' => 'Update',
-                    ],
-                ],
-                [
-                    'delete',
-                    '&#10060;',
-                    [
-                        'name' => 'delete',
-                        'style' => 'text-decoration: none!important;',
-                        'title' => 'Delete',
-                    ],
-                ],
-            ]
-        );
-
-        $new = clone $this;
-
-        foreach ($defaultButtons as $defaultButton) {
-            $new = $new->createDefaultButton($defaultButton[0], $defaultButton[1], $defaultButton[2]);
-        }
-
-        return $new;
     }
 
     /**
@@ -363,55 +378,25 @@ final class ActionColumn extends Column
             return parent::renderDataCellContent($data, $key, $index);
         }
 
-        return PHP_EOL . preg_replace_callback('/{([\w\-\/]+)}/', function (array $matches) use ($data, $key, $index): string {
-            $content = '';
-            $visible = false;
-            $name = $matches[1];
+        return PHP_EOL . preg_replace_callback(
+            '/{([\w\-\/]+)}/',
+            function (array $matches) use ($data, $key, $index): string {
+                $content = '';
+                $name = $matches[1];
 
-            if ($this->visibleButtons === []) {
-                $visible = true;
-            }
+                if (
+                    $this->isVisibleButton($name, $data, $key, $index) &&
+                    isset($this->buttons[$name]) &&
+                    $this->buttons[$name] instanceof Closure
+                ) {
+                    $url = $this->createUrl($name, $data, $key, $index);
+                    $content = (string) $this->buttons[$name]($url, $data, $key);
+                }
 
-            if (isset($this->visibleButtons[$name])) {
-                /** @var bool */
-                $visible = match ($this->visibleButtons[$name] instanceof Closure) {
-                    true => $this->visibleButtons[$name]($data, $key, $index),
-                    false => $this->visibleButtons[$name],
-                };
-            }
-
-            if ($visible && isset($this->buttons[$name]) && $this->buttons[$name] instanceof Closure) {
-                $url = $this->createUrl($name, $data, $key, $index);
-                $content = (string) $this->buttons[$name]($url, $data, $key);
-            }
-
-            return $content !== '' ? $content . PHP_EOL : '';
-        }, $this->template);
-    }
-
-    /**
-     * Initializes the default button rendering callback for single button.
-     *
-     * @param string $name The button names as it's written in template.
-     * @param string $icon The icon name.
-     * @param array $attributes The HTML attributes in terms of name-value pairs.
-     *
-     * @return static
-     */
-    private function createDefaultButton(string $name, string $icon, array $attributes = []): static
-    {
-        $new = clone $this;
-
-        if (!isset($new->buttons[$name]) && str_contains($new->template, '{' . $name . '}')) {
-            $new->buttons[$name] = static fn (string $url): string  => Button::create()
-                ->attributes($attributes)
-                ->content(Tag::span([], $icon))
-                ->link($url)
-                ->type('link')
-                ->render();
-        }
-
-        return $new;
+                return $content !== '' ? $content . PHP_EOL : '';
+            },
+            $this->template
+        );
     }
 
     /**
@@ -453,5 +438,25 @@ final class ActionColumn extends Column
         }
 
         return $this->getUrlGenerator()->generate($route, $urlArguments, $urlQueryParameters);
+    }
+
+    private function isVisibleButton(string $name, array|object $data, mixed $key, int $index): bool
+    {
+        $visible = false;
+
+        if ($this->visibleButtons === []) {
+            $visible = true;
+        }
+
+        if (isset($this->visibleButtons[$name]) && is_bool($this->visibleButtons[$name])) {
+            $visible = $this->visibleButtons[$name];
+        }
+
+        if (isset($this->visibleButtons[$name]) && $this->visibleButtons[$name] instanceof Closure) {
+            /** @var bool */
+            $visible = $this->visibleButtons[$name]($data, $key, $index);
+        }
+
+        return $visible;
     }
 }
