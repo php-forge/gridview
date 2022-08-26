@@ -272,6 +272,94 @@ final class ActionColumnTest extends TestCase
         );
     }
 
+    public function testLabelAttributes(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th class="test.class">test.label</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="test.label">
+            <a name="view" href="/admin/view?id=1" title="View" role="button" style="text-decoration: none!important;"><span>&#128270;</span></a>
+            <a name="update" href="/admin/update?id=1" title="Update" role="button" style="text-decoration: none!important;"><span>&#9998;</span></a>
+            <a name="delete" href="/admin/delete?id=1" title="Delete" role="button" style="text-decoration: none!important;"><span>&#10060;</span></a>
+            </td>
+            </tr>
+            <tr>
+            <td data-label="test.label">
+            <a name="view" href="/admin/view?id=2" title="View" role="button" style="text-decoration: none!important;"><span>&#128270;</span></a>
+            <a name="update" href="/admin/update?id=2" title="Update" role="button" style="text-decoration: none!important;"><span>&#9998;</span></a>
+            <a name="delete" href="/admin/delete?id=2" title="Delete" role="button" style="text-decoration: none!important;"><span>&#10060;</span></a>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithLabelAttributes())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator($this->createUrlGenerator())
+                ->urlName('admin')
+                ->render()
+        );
+    }
+
+    public function testName(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td name="test.name" data-label="actions">
+            <a name="view" href="/admin/view?id=1" title="View" role="button" style="text-decoration: none!important;"><span>&#128270;</span></a>
+            <a name="update" href="/admin/update?id=1" title="Update" role="button" style="text-decoration: none!important;"><span>&#9998;</span></a>
+            <a name="delete" href="/admin/delete?id=1" title="Delete" role="button" style="text-decoration: none!important;"><span>&#10060;</span></a>
+            </td>
+            </tr>
+            <tr>
+            <td name="test.name" data-label="actions">
+            <a name="view" href="/admin/view?id=2" title="View" role="button" style="text-decoration: none!important;"><span>&#128270;</span></a>
+            <a name="update" href="/admin/update?id=2" title="Update" role="button" style="text-decoration: none!important;"><span>&#9998;</span></a>
+            <a name="delete" href="/admin/delete?id=2" title="Delete" role="button" style="text-decoration: none!important;"><span>&#10060;</span></a>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithName())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator($this->createUrlGenerator())
+                ->urlName('admin')
+                ->render()
+        );
+    }
+
     public function testNotVisible(): void
     {
         Assert::equalsWithoutLE(
@@ -708,6 +796,20 @@ final class ActionColumnTest extends TestCase
     {
         return [
             ActionColumn::create()->label('test.label'),
+        ];
+    }
+
+    private function createColumnsWithLabelAttributes(): array
+    {
+        return [
+            ActionColumn::create()->label('test.label')->labelAttributes(['class' => 'test.class']),
+        ];
+    }
+
+    private function createColumnsWithName(): array
+    {
+        return [
+            ActionColumn::create()->name('test.name'),
         ];
     }
 

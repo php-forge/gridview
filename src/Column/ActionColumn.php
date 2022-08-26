@@ -126,11 +126,6 @@ final class ActionColumn extends Column
         return $new;
     }
 
-    public function getButtons(): array
-    {
-        return $this->buttons;
-    }
-
     public function getLabel(): string
     {
         $label = parent::getLabel();

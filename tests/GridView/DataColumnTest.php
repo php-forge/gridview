@@ -401,6 +401,82 @@ final class DataColumnTest extends TestCase
         );
     }
 
+    public function testLabel(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>test.id</th>
+            <th>test.username</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="test.id">1</td>
+            <td data-label="test.username">John</td>
+            </tr>
+            <tr>
+            <td data-label="test.id">2</td>
+            <td data-label="test.username">Mary</td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithLabel())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
+    public function testLabelAttributes(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th class="test.class">test.id</th>
+            <th class="test.class">test.username</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="test.id">1</td>
+            <td data-label="test.username">John</td>
+            </tr>
+            <tr>
+            <td data-label="test.id">2</td>
+            <td data-label="test.username">Mary</td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithLabelAttributes())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
     public function testLinkSorter(): void
     {
         Assert::equalsWithoutLE(
@@ -439,6 +515,45 @@ final class DataColumnTest extends TestCase
         );
     }
 
+    public function testName(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th><a class="asc" href="/admin/manage?page=1&amp;pagesize=10&amp;sort=-id%2Cname" data-sort="-id,name">Id <i class="bi bi-sort-alpha-up"></i></a></th>
+            <th><a class="asc" href="/admin/manage?page=1&amp;pagesize=10&amp;sort=-name%2Cid" data-sort="-name,id">Name <i class="bi bi-sort-alpha-up"></i></a></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td name="test.id" data-label="id">1</td>
+            <td name="test.username" data-label="name">John</td>
+            </tr>
+            <tr>
+            <td name="test.id" data-label="id">2</td>
+            <td name="test.username" data-label="name">Mary</td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithName())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1, true))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->urlName('admin/manage')
+                ->render()
+        );
+    }
+
     public function testNotSorting(): void
     {
         Assert::equalsWithoutLE(
@@ -468,9 +583,45 @@ final class DataColumnTest extends TestCase
             </div>
             HTML,
             GridView::create()
-                ->columns($this->createColumnsNotSorting())
+                ->columns($this->createColumnsWithNotSorting())
                 ->id('w1-grid')
                 ->paginator($this->createPaginator($this->data, 10, 1, true))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->urlName('admin/manage')
+                ->render()
+        );
+    }
+
+    public function testNotVisible(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>Id</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="id">1</td>
+            </tr>
+            <tr>
+            <td data-label="id">2</td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithNotVisible())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
                 ->translator(Mock::translator('en'))
                 ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
                 ->urlName('admin/manage')
@@ -699,6 +850,22 @@ final class DataColumnTest extends TestCase
         ];
     }
 
+    private function createColumnsWithLabel(): array
+    {
+        return [
+            DataColumn::create()->attribute('id')->label('test.id'),
+            DataColumn::create()->attribute('name')->label('test.username'),
+        ];
+    }
+
+    private function createColumnsWithLabelAttributes(): array
+    {
+        return [
+            DataColumn::create()->attribute('id')->label('test.id')->labelAttributes(['class' => 'test.class']),
+            DataColumn::create()->attribute('name')->label('test.username')->labelAttributes(['class' => 'test.class']),
+        ];
+    }
+
     private function createColumnsWithLinkSorter(): array
     {
         return [
@@ -711,11 +878,27 @@ final class DataColumnTest extends TestCase
         ];
     }
 
-    private function createColumnsNotSorting(): array
+    private function createColumnsWithNotSorting(): array
     {
         return [
             DataColumn::create()->attribute('id')->notSorting(),
             DataColumn::create()->attribute('name')->value('test'),
+        ];
+    }
+
+    private function createColumnsWithName(): array
+    {
+        return [
+            DataColumn::create()->attribute('id')->name('test.id'),
+            DataColumn::create()->attribute('name')->name('test.username'),
+        ];
+    }
+
+    private function createColumnsWithNotVisible(): array
+    {
+        return [
+            DataColumn::create()->attribute('id'),
+            DataColumn::create()->attribute('name')->notVisible(),
         ];
     }
 

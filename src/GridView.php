@@ -364,36 +364,33 @@ final class GridView extends BaseListView
         }
 
         foreach ($columns as $i => $column) {
-            if ($column instanceof Column && !$column->isVisible()) {
-                unset($columns[$i]);
-                continue;
-            }
-
-            if ($column instanceof ActionColumn) {
-                $column = $column
-                    ->createDefaultButton()
-                    ->urlGenerator($this->getUrlGenerator())
-                    ->urlName($this->urlName);
-            }
-
-            if ($column instanceof Column) {
+            if ($column instanceof Column && $column->isVisible()) {
                 $column = $column->emptyCell($this->emptyCell);
-            }
 
-            if ($column instanceof DataColumn) {
-                $linkSorter = $this->renderLinkSorter($column->getAttribute(), $column->getLabel());
-                $column = $column->filterModelName($this->filterModelName);
-
-                if ($linkSorter !== '') {
-                    $column = $column->linkSorter($linkSorter);
+                if ($column instanceof ActionColumn) {
+                    $column = $column
+                        ->createDefaultButton()
+                        ->urlGenerator($this->getUrlGenerator())
+                        ->urlName($this->urlName);
                 }
-            }
 
-            if ($column instanceof SerialColumn) {
-                $column = $column->offset($paginator->getOffset());
-            }
+                if ($column instanceof DataColumn) {
+                    $linkSorter = $this->renderLinkSorter($column->getAttribute(), $column->getLabel());
+                    $column = $column->filterModelName($this->filterModelName);
 
-            $columns[$i] = $column;
+                    if ($linkSorter !== '') {
+                        $column = $column->linkSorter($linkSorter);
+                    }
+                }
+
+                if ($column instanceof SerialColumn) {
+                    $column = $column->offset($paginator->getOffset());
+                }
+
+                $columns[$i] = $column;
+            } else {
+                unset($columns[$i]);
+            }
         }
 
         return $columns;

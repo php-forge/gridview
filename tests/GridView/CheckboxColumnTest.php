@@ -145,6 +145,129 @@ final class CheckboxColumnTest extends TestCase
         );
     }
 
+    public function testLabel(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>test.label</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="id">1</td>
+            <td data-label="name">John</td>
+            <td data-label="test.label"><input name="checkbox-selection" type="checkbox" value="0"></td>
+            </tr>
+            <tr>
+            <td data-label="id">2</td>
+            <td data-label="name">Mary</td>
+            <td data-label="test.label"><input name="checkbox-selection" type="checkbox" value="1"></td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithLabel())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
+    public function testLabelAttributes(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th class="test.class">test.label</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="id">1</td>
+            <td data-label="name">John</td>
+            <td data-label="test.label"><input name="checkbox-selection" type="checkbox" value="0"></td>
+            </tr>
+            <tr>
+            <td data-label="id">2</td>
+            <td data-label="name">Mary</td>
+            <td data-label="test.label"><input name="checkbox-selection" type="checkbox" value="1"></td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithLabelAttributes())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
+    public function testWithName(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th><input class="select-on-check-all" name="checkbox-selection-all" type="checkbox" value="1"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="id">1</td>
+            <td data-label="name">John</td>
+            <td name="test.checkbox"><input name="test.checkbox" type="checkbox" value="0"></td>
+            </tr>
+            <tr>
+            <td data-label="id">2</td>
+            <td data-label="name">Mary</td>
+            <td name="test.checkbox"><input name="test.checkbox" type="checkbox" value="1"></td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithName())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
     public function testNotMultiple(): void
     {
         Assert::equalsWithoutLE(
@@ -178,6 +301,44 @@ final class CheckboxColumnTest extends TestCase
             HTML,
             GridView::create()
                 ->columns($this->createColumnsWithNotMultiple())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
+    public function testNotVisible(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>Id</th>
+            <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="id">1</td>
+            <td data-label="name">John</td>
+            </tr>
+            <tr>
+            <td data-label="id">2</td>
+            <td data-label="name">Mary</td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithNotVisible())
                 ->id('w1-grid')
                 ->paginator($this->createPaginator($this->data, 10, 1))
                 ->translator(Mock::translator('en'))
@@ -269,6 +430,33 @@ final class CheckboxColumnTest extends TestCase
         ];
     }
 
+    private function createColumnsWithLabel(): array
+    {
+        return [
+            DataColumn::create()->attribute('id'),
+            DataColumn::create()->attribute('name'),
+            CheckboxColumn::create()->label('test.label'),
+        ];
+    }
+
+    private function createColumnsWithLabelAttributes(): array
+    {
+        return [
+            DataColumn::create()->attribute('id'),
+            DataColumn::create()->attribute('name'),
+            CheckboxColumn::create()->label('test.label')->labelAttributes(['class' => 'test.class']),
+        ];
+    }
+
+    private function createColumnsWithName(): array
+    {
+        return [
+            DataColumn::create()->attribute('id'),
+            DataColumn::create()->attribute('name'),
+            CheckboxColumn::create()->name('test.checkbox'),
+        ];
+    }
+
     private function createColumnsWithNotMultiple(): array
     {
         return [
@@ -283,7 +471,7 @@ final class CheckboxColumnTest extends TestCase
         return [
             DataColumn::create()->attribute('id'),
             DataColumn::create()->attribute('name'),
-            CheckboxColumn::create()->notMultiple(),
+            CheckboxColumn::create()->notVisible(),
         ];
     }
 }

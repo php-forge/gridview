@@ -234,7 +234,7 @@ abstract class Column
     public function name(string $value): static
     {
         $new = clone $this;
-        Attribute::add($new->attributes, 'name', $value);
+        Attribute::add($new->contentAttributes, 'name', $value);
 
         return $new;
     }
