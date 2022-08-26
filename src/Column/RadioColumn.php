@@ -7,7 +7,8 @@ namespace Forge\GridView\Column;
 use Forge\Html\Helper\Attribute;
 use Forge\Html\Tag\Tag;
 use JsonException;
-use Yiisoft\Json\Json;
+
+use function json_encode;
 
 /**
  * RadioButtonColumn displays a column of radio buttons in a grid view.
@@ -40,7 +41,11 @@ final class RadioColumn extends Column
 
         if (!array_key_exists('value', $contentAttributes)) {
             /** @var mixed */
-            Attribute::add($contentAttributes, 'value', is_array($key) ? Json::encode($key) : $key);
+            Attribute::add(
+                $contentAttributes,
+                'value',
+                is_array($key) ? json_encode($key, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $key,
+            );
         }
 
         return Tag::create('input', '', $contentAttributes);

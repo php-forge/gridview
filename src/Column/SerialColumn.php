@@ -11,11 +11,6 @@ final class SerialColumn extends Column
 {
     private int $offset = 0;
 
-    public function getLabel(): string
-    {
-        return parent::getLabel() !== '' ? parent::getLabel() : '#';
-    }
-
     /**
      * Return new instance with offset value of paginator.
      *
@@ -43,5 +38,10 @@ final class SerialColumn extends Column
     protected function renderDataCellContent(array|object $data, mixed $key, int $index): string
     {
         return (string) ($this->offset + $index + 1);
+    }
+
+    protected function getLabel(): string
+    {
+        return parent::getLabel() !== '' ? parent::getLabel() : '#';
     }
 }

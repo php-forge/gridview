@@ -17,7 +17,6 @@
         "forge/widget": "^1.0@dev",
         "yiisoft/arrays": "^2.0",
         "yiisoft/data": "^3.0@dev",
-        "yiisoft/json": "^1.0",
         "yiisoft/router": "^1.0",
         "yiisoft/translator-formatter-simple": "^1.0",
         "yiisoft/translator-message-php": "^1.0",

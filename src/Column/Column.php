@@ -164,26 +164,6 @@ abstract class Column
         return $this->attributes;
     }
 
-    public function getContent(): ?Closure
-    {
-        return $this->content;
-    }
-
-    public function getContentAttributes(): array
-    {
-        return $this->contentAttributes;
-    }
-
-    public function getEmptyCell(): string
-    {
-        return $this->emptyCell;
-    }
-
-    public function getLabel(): string
-    {
-        return $this->label;
-    }
-
     public function isVisible(): bool
     {
         return $this->visible;
@@ -301,16 +281,24 @@ abstract class Column
         return new static();
     }
 
-    /**
-     * Returns header cell label.
-     *
-     * This method may be overridden to customize the label of the header cell.
-     *
-     * @return string
-     */
-    protected function getHeaderCellLabel(): string
+    protected function getContent(): ?Closure
+    {
+        return $this->content;
+    }
+
+    protected function getContentAttributes(): array
+    {
+        return $this->contentAttributes;
+    }
+
+    protected function getEmptyCell(): string
     {
         return $this->emptyCell;
+    }
+
+    protected function getLabel(): string
+    {
+        return $this->label;
     }
 
     /**
@@ -347,19 +335,6 @@ abstract class Column
     }
 
     /**
-     * Renders the footer cell content.
-     *
-     * The default implementation simply renders {@see footer}.
-     * This method may be overridden to customize the rendering of the footer cell.
-     *
-     * @return string
-     */
-    protected function renderFooterCellContent(): string
-    {
-        return trim($this->footer) !== '' ? $this->footer : $this->emptyCell;
-    }
-
-    /**
      * Renders the header cell content.
      *
      * The default implementation simply renders {@see header}.
@@ -369,6 +344,19 @@ abstract class Column
      */
     protected function renderHeaderCellContent(): string
     {
-        return $this->getLabel() !== '' ? $this->getLabel() : $this->getHeaderCellLabel();
+        return $this->getLabel() !== '' ? $this->getLabel() : $this->emptyCell;
+    }
+
+    /**
+     * Renders the footer cell content.
+     *
+     * The default implementation simply renders {@see footer}.
+     * This method may be overridden to customize the rendering of the footer cell.
+     *
+     * @return string
+     */
+    private function renderFooterCellContent(): string
+    {
+        return $this->footer !== '' ? $this->footer : $this->emptyCell;
     }
 }

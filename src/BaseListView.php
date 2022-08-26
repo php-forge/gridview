@@ -67,8 +67,8 @@ abstract class BaseListView extends AbstractWidget
      *
      * @return static
      *
-     * {@see notShowOnEmpty}
-     * {@see emptyTextAttributes}
+     * {@see notShowOnEmpty()}
+     * {@see emptyTextAttributes()}
      */
     public function emptyText(string $emptyText): static
     {

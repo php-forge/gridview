@@ -162,34 +162,6 @@ final class DataColumn extends Column
         return $this->filter;
     }
 
-    /**
-     * Returns the data cell value.
-     *
-     * @param array|object $data The data.
-     * @param mixed $key The key associated with the data.
-     * @param int $index The zero-based index of the data in the data provider.
-     *
-     * @return string
-     */
-    public function getDataCellValue(array|object $data, mixed $key, int $index): string
-    {
-        $value = '';
-
-        if ($this->value !== null && !($this->value instanceof Closure)) {
-            $value = (string) $this->value;
-        }
-
-        if ($this->value instanceof Closure) {
-            $value = (string) call_user_func($this->value, $data, $key, $index, $this);
-        }
-
-        if ($this->attribute !== '' && $this->value === null) {
-            $value = (string) ArrayHelper::getValue($data, $this->attribute);
-        }
-
-        return $value === '' ? $this->getEmptyCell() : $value;
-    }
-
     public function getLabel(): string
     {
         return parent::getLabel() !== '' ? parent::getLabel() : ucfirst($this->attribute);
@@ -294,13 +266,40 @@ final class DataColumn extends Column
 
     protected function renderHeaderCellContent(): string
     {
-        $label = $this->getLabel() === ''
-            ? Encode::content(parent::renderHeaderCellContent()) : Encode::content($this->getLabel());
+        $label = Encode::content($this->getLabel());
 
         if ($this->attribute !== '' && $this->sortingEnabled && $this->linkSorter !== '') {
             $label = $this->linkSorter;
         }
 
         return $label;
+    }
+
+    /**
+     * Returns the data cell value.
+     *
+     * @param array|object $data The data.
+     * @param mixed $key The key associated with the data.
+     * @param int $index The zero-based index of the data in the data provider.
+     *
+     * @return string
+     */
+    private function getDataCellValue(array|object $data, mixed $key, int $index): string
+    {
+        $value = '';
+
+        if ($this->value !== null && !($this->value instanceof Closure)) {
+            $value = (string) $this->value;
+        }
+
+        if ($this->value instanceof Closure) {
+            $value = (string) call_user_func($this->value, $data, $key, $index, $this);
+        }
+
+        if ($this->attribute !== '' && $this->value === null) {
+            $value = (string) ArrayHelper::getValue($data, $this->attribute);
+        }
+
+        return $value === '' ? $this->getEmptyCell() : $value;
     }
 }

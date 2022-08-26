@@ -369,7 +369,7 @@ final class GridView extends BaseListView
 
                 if ($column instanceof ActionColumn) {
                     $column = $column
-                        ->createDefaultButton()
+                        ->createDefaultButtons()
                         ->urlGenerator($this->getUrlGenerator())
                         ->urlName($this->urlName);
                 }

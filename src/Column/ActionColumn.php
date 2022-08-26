@@ -81,7 +81,7 @@ final class ActionColumn extends Column
      *
      * @return static
      */
-    public function createDefaultButton(): static
+    public function createDefaultButtons(): static
     {
         /** @psalm-var array<string,Closure> */
         $defaultButtons = [

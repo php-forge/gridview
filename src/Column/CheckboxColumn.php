@@ -8,7 +8,6 @@ use Forge\Html\Helper\Attribute;
 use Forge\Html\Helper\CssClass;
 use Forge\Html\Tag\Tag;
 use JsonException;
-use Yiisoft\Json\Json;
 
 /**
  * CheckboxColumn displays a column of checkboxes in a grid view.
@@ -49,9 +48,13 @@ final class CheckboxColumn extends Column
 
         $contentAttributes = $this->getContentAttributes();
 
-        if (!isset($contentAttributes['value'])) {
+        if (!array_key_exists('value', $contentAttributes)) {
             /** @var mixed */
-            $contentAttributes['value'] = is_array($key) ? Json::encode($key) : $key;
+            Attribute::add(
+                $contentAttributes,
+                'value',
+                is_array($key) ? json_encode($key, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $key,
+            );
         }
 
         if (!array_key_exists('name', $contentAttributes)) {
