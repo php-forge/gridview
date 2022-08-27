@@ -307,10 +307,6 @@ final class GridView extends BaseListView
 
     protected function run(): string
     {
-        if (null === $this->paginator) {
-            throw new InvalidArgumentException('The "paginator" property must be set.');
-        }
-
         return parent::run();
     }
 
@@ -488,11 +484,10 @@ final class GridView extends BaseListView
 
         if ($rows === [] && $this->emptyText !== '') {
             $colspan = count($columns);
-            $emptyText = $this->getTranslator()->translate($this->emptyText, [], 'gridview');
 
             return Tag::create(
                 'tbody',
-                Tag::create('tr', Tag::create('td', $emptyText, ['colspan' => $colspan])),
+                Tag::create('tr', $this->renderEmpty($colspan)),
                 []
             );
         }

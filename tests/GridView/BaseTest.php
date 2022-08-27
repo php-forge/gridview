@@ -515,6 +515,44 @@ final class BaseTest extends TestCase
         );
     }
 
+    public function testPagination(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>#</th>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Age</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td data-label="#">1</td>
+            <td data-label="id">1</td>
+            <td data-label="name">John</td>
+            <td data-label="age">20</td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumns())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 1, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
     public function testRenderWithEmptyData(): void
     {
         Assert::equalsWithoutLE(

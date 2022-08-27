@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forge\GridView;
 
+use Forge\Html\Helper\Attribute;
 use Forge\Html\Tag\Tag;
 use Forge\Html\Widgets\Components\LinkSorter;
 use Forge\Widget\AbstractWidget;
@@ -415,13 +416,15 @@ abstract class BaseListView extends AbstractWidget
         return $dataReader;
     }
 
-    protected function renderEmpty(): string
+    protected function renderEmpty(int $colspan): string
     {
-        if ($this->emptyText === '') {
-            return '';
-        }
+        $emptyTextAttributes = $this->emptyTextAttributes;
 
-        return Tag::div($this->emptyTextAttributes, $this->emptyText);
+        $emptyText = $this->getTranslator()->translate($this->emptyText, [], 'gridview');
+
+        Attribute::add($emptyTextAttributes, 'colspan', $colspan);
+
+        return Tag::create('td', $emptyText, $emptyTextAttributes);
     }
 
     /**
