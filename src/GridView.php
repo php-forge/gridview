@@ -11,7 +11,6 @@ use Forge\GridView\Column\DataColumn;
 use Forge\GridView\Column\SerialColumn;
 use Forge\Html\Helper\CssClass;
 use Forge\Html\Tag\Tag;
-use InvalidArgumentException;
 use ReflectionException;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 
