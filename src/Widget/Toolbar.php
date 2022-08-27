@@ -7,7 +7,6 @@ namespace Forge\GridView\Widget;
 use Forge\Html\Helper\CssClass;
 use Forge\Html\Tag\Tag;
 use Forge\Widget\AbstractWidget;
-use ReflectionException;
 
 final class Toolbar extends AbstractWidget
 {
@@ -17,6 +16,7 @@ final class Toolbar extends AbstractWidget
     private array $containerRightAttributes = [];
     private string $contentLeft = '';
     private string $contentRight = '';
+
     /**
      * Returns a new instance whether the toolbar is rendered in a container.
      *
