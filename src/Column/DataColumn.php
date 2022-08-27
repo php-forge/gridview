@@ -162,6 +162,11 @@ final class DataColumn extends Column
         return $this->filter;
     }
 
+    public function getFilterAttribute(): string
+    {
+        return $this->filterAttribute;
+    }
+
     public function getLabel(): string
     {
         return parent::getLabel() !== '' ? parent::getLabel() : ucfirst($this->attribute);

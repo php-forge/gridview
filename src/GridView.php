@@ -32,7 +32,7 @@ final class GridView extends BaseListView
     public const FILTER_POS_BODY = 'body';
     private Closure|null $afterRow = null;
     private Closure|null $beforeRow = null;
-    /** @psalm-var array<array-key,array<array-key,Column>|Column|string> */
+    /** @psalm-var array<array-key,Column|null> */
     private array $columns = [];
     private bool $columnsGroupEnabled = false;
     private string $emptyCell = '&nbsp;';
@@ -96,7 +96,7 @@ final class GridView extends BaseListView
      *
      * @return self
      *
-     * @psalm-param array<array-key,array<array-key,Column>|Column|string> $values
+     * @psalm-param array<array-key,Column|null> $values
      */
     public function columns(array $values): self
     {
@@ -347,7 +347,7 @@ final class GridView extends BaseListView
      *
      * @throws ReflectionException
      *
-     * @psalm-return array<array-key,array<array-key,Column>|Column|string>
+     * @psalm-return array<array-key,Column|null>
      */
     private function renderColumns(): array
     {
@@ -399,7 +399,7 @@ final class GridView extends BaseListView
      *
      * @return string
      *
-     * @psalm-param array<array-key,array<array-key,Column>|Column|string> $columns
+     * @psalm-param array<array-key,Column|null> $columns
      */
     private function renderColumnGroup(array $columns): string
     {
@@ -421,23 +421,27 @@ final class GridView extends BaseListView
      *
      * @return string The rendering result.
      *
-     * @psalm-param array<array-key,array<array-key,Column>|Column|string> $columns
+     * @psalm-param array<array-key,Column|null> $columns
      */
     private function renderFilters(array $columns): string
     {
         $cells = [];
+        $countFilter = 0;
         $filterRowAttributes = $this->filterRowAttributes;
 
         CssClass::add($filterRowAttributes, 'filters');
 
         foreach ($columns as $column) {
-            if ($column instanceof DataColumn && ($column->getFilter() !== '' || $this->filterModelName !== '')) {
+            if ($column instanceof DataColumn && ($column->getFilter() !== '' || $column->getFilterAttribute() !== '')) {
                 $cells[] = $column->renderFilterCell() . PHP_EOL;
+                $countFilter++;
+            } else {
+                $cells[] = Tag::create('td', '&nbsp;') . PHP_EOL;
             }
         }
 
-        return match ($cells) {
-            [] => '',
+        return match ($countFilter > 0) {
+            false => '',
             default => Tag::create('tr', trim(implode('', $cells)), $filterRowAttributes),
         };
     }
@@ -449,7 +453,7 @@ final class GridView extends BaseListView
      *
      * @return string
      *
-     * @psalm-param array<array-key,array<array-key,Column>|Column|string> $columns
+     * @psalm-param array<array-key,Column|null> $columns
      */
     private function renderTableBody(array $columns): string
     {
@@ -503,7 +507,7 @@ final class GridView extends BaseListView
      *
      * @return string
      *
-     * @psalm-param array<array-key,array<array-key,Column>|Column|string> $columns
+     * @psalm-param array<array-key,Column|null> $columns
      */
     private function renderTableFooter(array $columns): string
     {
@@ -532,7 +536,7 @@ final class GridView extends BaseListView
      *
      * @return string
      *
-     * @psalm-param array<array-key,array<array-key,Column>|Column|string> $columns
+     * @psalm-param array<array-key,Column|null> $columns
      */
     private function renderTableHeader(array $columns): string
     {
@@ -566,7 +570,7 @@ final class GridView extends BaseListView
      *
      * @return string
      *
-     * @psalm-param array<array-key,array<array-key,Column>|Column|string> $columns
+     * @psalm-param array<array-key,Column|null> $columns
      */
     private function renderTableRow(array $columns, array|object $data, mixed $key, int $index): string
     {
