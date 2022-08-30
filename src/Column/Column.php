@@ -20,7 +20,7 @@ abstract class Column
 {
     private array $attributes = [];
     private Closure|null $content = null;
-    private array|Closure $contentAttributes = [];
+    private array $contentAttributes = [];
     private string $emptyCell = '';
     private array $filterAttributes = [];
     private string $footer = '';
@@ -71,11 +71,11 @@ abstract class Column
     /**
      * Return new instance with the HTML attributes for the column content.
      *
-     * @param array|Closure $values Attribute values indexed by attribute names.
+     * @param array $values Attribute values indexed by attribute names.
      *
      * @return static
      */
-    public function contentAttributes(array|Closure $values): static
+    public function contentAttributes(array $values): static
     {
         $new = clone $this;
         $new->contentAttributes = $values;
@@ -245,8 +245,15 @@ abstract class Column
     {
         $contentAttributes = $this->contentAttributes;
 
-        if ($contentAttributes instanceof Closure) {
-            $contentAttributes = $contentAttributes($data, $key, $index, $this);
+        /**
+         * @var string $name
+         * @var mixed $value
+         */
+        foreach ($contentAttributes as $name => $value) {
+            if ($value instanceof Closure) {
+                /** @var mixed */
+                $contentAttributes[$name] = $value($data, $key, $index, $this);
+            }
         }
 
         if (!array_key_exists('data-label', $contentAttributes)) {
@@ -285,7 +292,7 @@ abstract class Column
         return new static();
     }
 
-    protected function getContent(): ?Closure
+    protected function getContent(): Closure|null
     {
         return $this->content;
     }

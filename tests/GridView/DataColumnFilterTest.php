@@ -607,7 +607,7 @@ final class DataColumnFilterTest extends TestCase
             </tr>
             <tr class="text-center filters">
             <th><select name="searchModel[id]">
-            <option>Select...</option>
+            <option value="0">Select...</option>
             <option value="1">Jhon</option>
             <option value="2">Mary</option>
             </select></th>

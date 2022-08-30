@@ -167,7 +167,7 @@ final class DataColumn extends Column
     {
         $new = clone $this;
         $new->filterInputSelectPrompt = $prompt;
-        $new->filterInputDefaultValue = $value;
+        $new->filterValueDefault = $value;
 
         return $new;
     }
@@ -398,7 +398,6 @@ final class DataColumn extends Column
         $name = Attribute::getInputName($this->filterModelName, $this->filterAttribute);
 
         Attribute::add($filterInputAttributes, 'name', $name);
-        Attribute::add($filterInputAttributes, 'value', $this->filterValueDefault);
 
         return Select::create()
             ->attributes($filterInputAttributes)

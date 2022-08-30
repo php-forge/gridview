@@ -564,12 +564,16 @@ final class DataColumnTest extends TestCase
             DataColumn::create()
                 ->attribute('id')
                 ->contentAttributes(
-                    static fn (array|object $data, mixed $key, int $index): array => ['class' => 'test.class']
+                    [
+                        'class' => static fn (array|object $data, mixed $key, int $index): string => 'test.class',
+                    ],
                 ),
             DataColumn::create()
                 ->attribute('name')
                 ->contentAttributes(
-                    static fn (array|object $data, mixed $key, int $index): array => ['class' => 'test.class']
+                    [
+                        'class' => static fn (array|object $data, mixed $key, int $index): string => 'test.class',
+                    ],
                 ),
         ];
     }
