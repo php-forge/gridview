@@ -9,7 +9,11 @@ use Forge\Html\Helper\Attribute;
 use Forge\Html\Helper\CssClass;
 use Forge\Html\Helper\Encode;
 use Forge\Html\Tag\Tag;
+use Forge\Html\Tag\Select;
+use InvalidArgumentException;
 use Yiisoft\Arrays\ArrayHelper;
+
+use function sprintf;
 
 /**
  * DataColumn is the default column type for the {@see GridView} widget.
@@ -33,7 +37,26 @@ final class DataColumn extends Column
     private string $filter = '';
     private string $filterAttribute = '';
     private array $filterInputAttributes = [];
+    private array $filterInputSelectItems = [];
+    private string $filterInputSelectPrompt = '';
     private string $filterModelName = '';
+    private string $filterType = 'text';
+    /** @psalm-var string[] */
+    private array $filterTypes = [
+        'date' => 'date',
+        'datetime' => 'datetime-local',
+        'email' => 'email',
+        'month' => 'month',
+        'number' => 'number',
+        'range' => 'range',
+        'search' => 'search',
+        'select' => 'select',
+        'tel' => 'tel',
+        'text' => 'text',
+        'time' => 'time',
+        'url' => 'url',
+        'week' => 'week',
+    ];
     private mixed $filterValueDefault = null;
     private string $linkSorter = '';
     private bool $sortingEnabled = true;
@@ -117,6 +140,40 @@ final class DataColumn extends Column
     }
 
     /**
+     * Return new instance with the filter input select items.
+     *
+     * @param array $values The select items for the filter input.
+     *
+     * This property is used in combination with the {@see filter} property. When {@see filter} is not set or is an
+     * array, this property will be used to render the HTML attributes for the generated filter input fields.
+     */
+    public function filterInputSelectItems(array $values): self
+    {
+        $new = clone $this;
+        $new->filterInputSelectItems = $values;
+
+        return $new;
+    }
+
+    /**
+     * Return new instance with the filter input select prompt.
+     *
+     * @param string $prompt The prompt text for the filter input select.
+     * @param mixed $value The value for the prompt.
+     *
+     * This property is used in combination with the {@see filter} property. When {@see filter} is not set or is an
+     * array, this property will be used to render the HTML attributes for the generated filter input fields.
+     */
+    public function filterInputSelectPrompt(string $prompt, mixed $value = null): self
+    {
+        $new = clone $this;
+        $new->filterInputSelectPrompt = $prompt;
+        $new->filterInputDefaultValue = $value;
+
+        return $new;
+    }
+
+    /**
      * Return new instance with the filter model name.
      *
      * @param string $value The form model name that keeps the user-entered filter data. When this property is set, the
@@ -133,6 +190,25 @@ final class DataColumn extends Column
     {
         $new = clone $this;
         $new->filterModelName = $value;
+
+        return $new;
+    }
+
+    /**
+     * Return new instance with the filter type.
+     *
+     * @param string $value The filter type.
+     *
+     * @return self
+     */
+    public function filterType(string $value): self
+    {
+        if (!isset($this->filterTypes[$value])) {
+            throw new InvalidArgumentException(sprintf('Invalid filter type "%s".', $value));
+        }
+
+        $new = clone $this;
+        $new->filterType = $value;
 
         return $new;
     }
@@ -253,17 +329,12 @@ final class DataColumn extends Column
     protected function renderFilterCellContent(): string
     {
         $filter = $this->filter !== '' ? $this->filter : parent::renderFilterCellContent();
-        $filterInputAttributes = $this->filterInputAttributes;
 
         if ($this->filterAttribute !== '') {
-            CssClass::add($filterInputAttributes, 'form-control');
-
-            $name = Attribute::getInputName($this->filterModelName, $this->filterAttribute);
-
-            Attribute::add($filterInputAttributes, 'name', $name);
-            Attribute::add($filterInputAttributes, 'value', $this->filterValueDefault);
-
-            $filter = Tag::create('input', '', $filterInputAttributes);
+            $filter = match ($this->filterType) {
+                'select' => $this->renderFilterSelect(),
+                default => $this->renderFilterInput(),
+            };
         }
 
         return $filter;
@@ -306,5 +377,34 @@ final class DataColumn extends Column
         }
 
         return $value === '' ? $this->getEmptyCell() : $value;
+    }
+
+    private function renderFilterInput(): string
+    {
+        $filterInputAttributes = $this->filterInputAttributes;
+
+        $name = Attribute::getInputName($this->filterModelName, $this->filterAttribute);
+
+        Attribute::add($filterInputAttributes, 'name', $name);
+        Attribute::add($filterInputAttributes, 'type', $this->filterTypes[$this->filterType]);
+        Attribute::add($filterInputAttributes, 'value', $this->filterValueDefault);
+
+        return Tag::create('input', '', $filterInputAttributes);
+    }
+
+    private function renderFilterSelect(): string
+    {
+        $filterInputAttributes = $this->filterInputAttributes;
+
+        $name = Attribute::getInputName($this->filterModelName, $this->filterAttribute);
+
+        Attribute::add($filterInputAttributes, 'name', $name);
+        Attribute::add($filterInputAttributes, 'value', $this->filterValueDefault);
+
+        return Select::create()
+            ->attributes($filterInputAttributes)
+            ->items($this->filterInputSelectItems)
+            ->prompt($this->filterInputSelectPrompt, (string) $this->filterValueDefault)
+            ->render();
     }
 }

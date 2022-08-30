@@ -97,6 +97,44 @@ final class DataColumnTest extends TestCase
         );
     }
 
+    public function testContentAttributesClosure(): void
+    {
+        Assert::equalsWithoutLE(
+            <<<HTML
+            <div id="w1-grid">
+            <table class="table">
+            <thead>
+            <tr>
+            <th>Id</th>
+            <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td class="test.class" data-label="id">1</td>
+            <td class="test.class" data-label="name">John</td>
+            </tr>
+            <tr>
+            <td class="test.class" data-label="id">2</td>
+            <td class="test.class" data-label="name">Mary</td>
+            </tr>
+            </tbody>
+            </table>
+            <div>
+            gridview.summary
+            </div>
+            </div>
+            HTML,
+            GridView::create()
+                ->columns($this->createColumnsWithContentAttributesClosure())
+                ->id('w1-grid')
+                ->paginator($this->createPaginator($this->data, 10, 1))
+                ->translator(Mock::translator('en'))
+                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
+                ->render()
+        );
+    }
+
     public function testDataLabel(): void
     {
         Assert::equalsWithoutLE(
@@ -127,272 +165,6 @@ final class DataColumnTest extends TestCase
             HTML,
             GridView::create()
                 ->columns($this->createColumnsWithDataLabel())
-                ->id('w1-grid')
-                ->paginator($this->createPaginator($this->data, 10, 1))
-                ->translator(Mock::translator('en'))
-                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
-                ->render()
-        );
-    }
-
-    public function testFilter(): void
-    {
-        Assert::equalsWithoutLE(
-            <<<HTML
-            <div id="w1-grid">
-            <table class="table">
-            <thead>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            </tr>
-            <tr class="filters">
-            <th>&nbsp;</th>
-            <th><input class="form-control" name="searchModel[name]"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td data-label="id">1</td>
-            <td data-label="name">John</td>
-            </tr>
-            <tr>
-            <td data-label="id">2</td>
-            <td data-label="name">Mary</td>
-            </tr>
-            </tbody>
-            </table>
-            <div>
-            gridview.summary
-            </div>
-            </div>
-            HTML,
-            GridView::create()
-                ->columns($this->createColumnsWithFilter())
-                ->id('w1-grid')
-                ->paginator($this->createPaginator($this->data, 10, 1))
-                ->translator(Mock::translator('en'))
-                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
-                ->render()
-        );
-    }
-
-    public function testFilterInputAttributes(): void
-    {
-        Assert::equalsWithoutLE(
-            <<<HTML
-            <div id="w1-grid">
-            <table class="table">
-            <thead>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            </tr>
-            <tr class="filters">
-            <th><input class="test.class form-control" name="searchModel[id]" value="0"></th>
-            <th><input class="test.class form-control" name="searchModel[name]"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td data-label="id">1</td>
-            <td data-label="name">John</td>
-            </tr>
-            <tr>
-            <td data-label="id">2</td>
-            <td data-label="name">Mary</td>
-            </tr>
-            </tbody>
-            </table>
-            <div>
-            gridview.summary
-            </div>
-            </div>
-            HTML,
-            GridView::create()
-                ->columns($this->createColumnsWithFilterInputAttributes())
-                ->filterModelName('searchModel')
-                ->id('w1-grid')
-                ->paginator($this->createPaginator($this->data, 10, 1))
-                ->translator(Mock::translator('en'))
-                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
-                ->render()
-        );
-    }
-
-    public function testFilterPositionFooter(): void
-    {
-        Assert::equalsWithoutLE(
-            <<<HTML
-            <div id="w1-grid">
-            <table class="table">
-            <thead>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            </tr>
-            </thead>
-            <tfoot>
-            <tr>
-            <td>&nbsp;</td><td>&nbsp;</td>
-            </tr>
-            <tr class="filters">
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[id]" value="0"></th>
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[name]"></th>
-            </tr>
-            </tfoot>
-            <tbody>
-            <tr>
-            <td data-label="id">1</td>
-            <td data-label="name">John</td>
-            </tr>
-            <tr>
-            <td data-label="id">2</td>
-            <td data-label="name">Mary</td>
-            </tr>
-            </tbody>
-            </table>
-            <div>
-            gridview.summary
-            </div>
-            </div>
-            HTML,
-            GridView::create()
-                ->columns($this->createColumnsWithFilters())
-                ->filterModelName('searchModel')
-                ->filterPosition(GridView::FILTER_POS_FOOTER)
-                ->footerEnabled(true)
-                ->id('w1-grid')
-                ->paginator($this->createPaginator($this->data, 10, 1))
-                ->translator(Mock::translator('en'))
-                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
-                ->render()
-        );
-    }
-
-    public function testFilterPositionHeader(): void
-    {
-        Assert::equalsWithoutLE(
-            <<<HTML
-            <div id="w1-grid">
-            <table class="table">
-            <thead>
-            <tr class="filters">
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[id]" value="0"></th>
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[name]"></th>
-            </tr>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td data-label="id">1</td>
-            <td data-label="name">John</td>
-            </tr>
-            <tr>
-            <td data-label="id">2</td>
-            <td data-label="name">Mary</td>
-            </tr>
-            </tbody>
-            </table>
-            <div>
-            gridview.summary
-            </div>
-            </div>
-            HTML,
-            GridView::create()
-                ->columns($this->createColumnsWithFilters())
-                ->filterModelName('searchModel')
-                ->filterPosition(GridView::FILTER_POS_HEADER)
-                ->id('w1-grid')
-                ->paginator($this->createPaginator($this->data, 10, 1))
-                ->translator(Mock::translator('en'))
-                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
-                ->render()
-        );
-    }
-
-    public function testFilterRowAttributes(): void
-    {
-        Assert::equalsWithoutLE(
-            <<<HTML
-            <div id="w1-grid">
-            <table class="table">
-            <thead>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            </tr>
-            <tr class="text-center filters">
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[id]" value="0"></th>
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[name]"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td data-label="id">1</td>
-            <td data-label="name">John</td>
-            </tr>
-            <tr>
-            <td data-label="id">2</td>
-            <td data-label="name">Mary</td>
-            </tr>
-            </tbody>
-            </table>
-            <div>
-            gridview.summary
-            </div>
-            </div>
-            HTML,
-            GridView::create()
-                ->columns($this->createColumnsWithFilters())
-                ->filterModelName('searchModel')
-                ->filterRowAttributes(['class' => 'text-center'])
-                ->id('w1-grid')
-                ->paginator($this->createPaginator($this->data, 10, 1))
-                ->translator(Mock::translator('en'))
-                ->urlGenerator(Mock::urlGenerator([Route::get('/admin/manage')->name('admin/manage')]))
-                ->render()
-        );
-    }
-
-    public function testFilters(): void
-    {
-        Assert::equalsWithoutLE(
-            <<<HTML
-            <div id="w1-grid">
-            <table class="table">
-            <thead>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            </tr>
-            <tr class="filters">
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[id]" value="0"></th>
-            <th class="text-center" maxlength="5" style="width:60px"><input class="form-control" name="searchModel[name]"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            <td data-label="id">1</td>
-            <td data-label="name">John</td>
-            </tr>
-            <tr>
-            <td data-label="id">2</td>
-            <td data-label="name">Mary</td>
-            </tr>
-            </tbody>
-            </table>
-            <div>
-            gridview.summary
-            </div>
-            </div>
-            HTML,
-            GridView::create()
-                ->columns($this->createColumnsWithFilters())
-                ->filterModelName('searchModel')
                 ->id('w1-grid')
                 ->paginator($this->createPaginator($this->data, 10, 1))
                 ->translator(Mock::translator('en'))
@@ -786,67 +558,27 @@ final class DataColumnTest extends TestCase
         ];
     }
 
+    private function createColumnsWithContentAttributesClosure(): array
+    {
+        return [
+            DataColumn::create()
+                ->attribute('id')
+                ->contentAttributes(
+                    static fn (array|object $data, mixed $key, int $index): array => ['class' => 'test.class']
+                ),
+            DataColumn::create()
+                ->attribute('name')
+                ->contentAttributes(
+                    static fn (array|object $data, mixed $key, int $index): array => ['class' => 'test.class']
+                ),
+        ];
+    }
+
     private function createColumnsWithDataLabel(): array
     {
         return [
             DataColumn::create()->attribute('id')->dataLabel('test.id'),
             DataColumn::create()->attribute('name')->dataLabel('test.name'),
-        ];
-    }
-
-    private function createColumnsWithFilter(): array
-    {
-        return [
-            DataColumn::create()
-                ->attribute('id')
-                ->filter('&nbsp;'),
-            DataColumn::create()
-                ->attribute('name')
-                ->filter('<input class="form-control" name="searchModel[name]">'),
-        ];
-    }
-
-    private function createColumnsWithFilterInputAttributes(): array
-    {
-        return [
-            DataColumn::create()
-                ->attribute('id')
-                ->filterAttribute('id')
-                ->filterInputAttributes(['class' => 'test.class'])
-                ->filterValueDefault(0),
-            DataColumn::create()
-                ->attribute('name')
-                ->filterAttribute('name')
-                ->filterInputAttributes(['class' => 'test.class'])
-                ->filterValueDefault(''),
-        ];
-    }
-
-    private function createColumnsWithFilters(): array
-    {
-        return [
-            DataColumn::create()
-                ->attribute('id')
-                ->filterAttribute('id')
-                ->filterValueDefault(0)
-                ->filterAttributes(
-                    [
-                        'class' => 'text-center',
-                        'maxlength' => '5',
-                        'style' => 'width:60px',
-                    ]
-                ),
-            DataColumn::create()
-                ->attribute('name')
-                ->filterAttribute('name')
-                ->filterValueDefault('')
-                ->filterAttributes(
-                    [
-                        'class' => 'text-center',
-                        'maxlength' => '5',
-                        'style' => 'width:60px',
-                    ]
-                ),
         ];
     }
 

@@ -57,7 +57,10 @@ final class ImmutableTest extends TestCase
         $this->assertNotSame($column, $column->filter(''));
         $this->assertNotSame($column, $column->filterAttribute(''));
         $this->assertNotSame($column, $column->filterInputAttributes([]));
+        $this->assertNotSame($column, $column->filterInputSelectItems([]));
+        $this->assertNotSame($column, $column->filterInputSelectPrompt(''));
         $this->assertNotSame($column, $column->filterModelName(''));
+        $this->assertNotSame($column, $column->filterType('text'));
         $this->assertNotSame($column, $column->filterValueDefault(null));
         $this->assertNotSame($column, $column->linkSorter(''));
         $this->assertNotSame($column, $column->notSorting());

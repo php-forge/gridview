@@ -20,7 +20,7 @@ abstract class Column
 {
     private array $attributes = [];
     private Closure|null $content = null;
-    private array $contentAttributes = [];
+    private array|Closure $contentAttributes = [];
     private string $emptyCell = '';
     private array $filterAttributes = [];
     private string $footer = '';
@@ -71,11 +71,11 @@ abstract class Column
     /**
      * Return new instance with the HTML attributes for the column content.
      *
-     * @param array $values Attribute values indexed by attribute names.
+     * @param array|Closure $values Attribute values indexed by attribute names.
      *
      * @return static
      */
-    public function contentAttributes(array $values): static
+    public function contentAttributes(array|Closure $values): static
     {
         $new = clone $this;
         $new->contentAttributes = $values;
@@ -244,6 +244,10 @@ abstract class Column
     public function renderDataCell(array|object $data, mixed $key, int $index): string
     {
         $contentAttributes = $this->contentAttributes;
+
+        if ($contentAttributes instanceof Closure) {
+            $contentAttributes = $contentAttributes($data, $key, $index, $this);
+        }
 
         if (!array_key_exists('data-label', $contentAttributes)) {
             Attribute::add($contentAttributes, 'data-label', strtolower($this->getLabel()));

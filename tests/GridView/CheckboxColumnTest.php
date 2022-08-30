@@ -227,7 +227,7 @@ final class CheckboxColumnTest extends TestCase
         );
     }
 
-    public function testWithName(): void
+    public function testName(): void
     {
         Assert::equalsWithoutLE(
             <<<HTML

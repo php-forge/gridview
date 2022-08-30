@@ -119,7 +119,7 @@ final class BaseTest extends TestCase
         );
     }
 
-    public function testColumnGroupEnabledWithEmpty(): void
+    public function testColumnGroupEnabledEmpty(): void
     {
         Assert::equalsWithoutLE(
             <<<HTML
@@ -478,7 +478,7 @@ final class BaseTest extends TestCase
         );
     }
 
-    public function testHeaderTableEnabledWithFalse(): void
+    public function testHeaderTableEnabledFalse(): void
     {
         Assert::equalsWithoutLE(
             <<<HTML
@@ -553,7 +553,7 @@ final class BaseTest extends TestCase
         );
     }
 
-    public function testRenderWithEmptyData(): void
+    public function testRenderEmptyData(): void
     {
         Assert::equalsWithoutLE(
             <<<HTML
