@@ -6,7 +6,6 @@ namespace Forge\GridView\Column;
 
 use Closure;
 use Forge\Html\Helper\Attribute;
-use Forge\Html\Helper\CssClass;
 use Forge\Html\Helper\Encode;
 use Forge\Html\Tag\Tag;
 use Forge\Html\Tag\Select;
